@@ -32,6 +32,9 @@ import Lights from '../light/lights.js';
         plane.rotation.x = -Math.PI / 2;
         this.scene.add(plane);
     }
+    loadCharacter(){
+        console.log("Asdsa");
+    }
 }
 
 export default LoadScene;
