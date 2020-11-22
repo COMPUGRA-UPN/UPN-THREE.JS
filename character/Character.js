@@ -1,6 +1,7 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader.js';
 import { FPPControls } from '../controls/FPPControls.js';
+
 let controls;
 let controls2;
 let mixers;
@@ -8,7 +9,7 @@ let animationLoaded = false;
 const clock = new THREE.Clock();
 const clock1 = new THREE.Clock();
 const clock2 = new THREE.Clock();
-var Character = function (scene, camera, render) {
+var Character = function (scene, render, camera) {
     this._previousRAF = null;
     this.scene = scene;
     this.camera = camera;
@@ -24,17 +25,16 @@ var Character = function (scene, camera, render) {
 
             const params = {
                 target: fbx,
-                camera: this.camera,
             }
             controls = new FPPControls(fbx, this.renderT.domElement, true);
             controls.movementSpeed = 100;
             controls.lookSpeed = 0.1;
             controls.lookVertical = false;
-
             controls2 = new FPPControls(this.camera, this.renderT.domElement, false);
             controls2.movementSpeed = 100;
             controls2.lookSpeed = 0.1;
             controls2.lookVertical = false;
+
             this.fbx = fbx;
             this.scene.add(fbx);
         });
@@ -67,19 +67,27 @@ var Character = function (scene, camera, render) {
 
             if (mixers) mixers.update(delta);
 
-            this.renderT.render(this.scene, this.camera);
+            // this.renderT.render(this.scene, this.camera);
             if (animationLoaded) {
+                // console.log(this.fbx.rotation.y);
+                // console.log(this.camera.rotation.y);
                 controls.update(clock1.getDelta());
                 controls2.update(clock2.getDelta());
+                // this.camera.rotation.y = this.fbx.rotation.y;
 
             }
-            // controls2.update(clock2.getDelta());
             if (!animationLoaded && this.fbx != null) {
                 this.loadAnimation(path);
                 animationLoaded = true;
             }
 
         });
+    }
+    this.TPPCamera = function (camera) {
+        controls2 = new FPPControls(camera, this.renderT.domElement, false);
+        controls2.movementSpeed = 100;
+        controls2.lookSpeed = 0.1;
+        controls2.lookVertical = false;
     }
     this.animate = function (path) {
         window.requestIdleCallback(this._RAF(path));
