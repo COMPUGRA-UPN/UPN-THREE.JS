@@ -2,7 +2,7 @@ import * as THREE from './node_modules/three/build/three.module.js';
 import LoadScene from "./scene/evironment.js";
 import FPPCamera from "./camera/FPPCamera.js";
 import TPPCamera from "./camera/TPPCamera.js";
-
+import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
 import { Character } from "./character/Character.js";
 
 
@@ -13,7 +13,7 @@ let CHARACTER = null;
 
 // Graphics variables
 let container, stats;
-let camera, scene, renderer;
+let camera, scene, renderer, gui;
 
 const clock = new THREE.Clock();
 
@@ -94,7 +94,11 @@ function init() {
     dynamicObjects.push(cube);
 
     physicsWorld.addRigidBody(body);
-
+    
+    //gui
+    scene.userData.fppCamera = true;
+    scene.userData.ambientLight = new THREE.Color(0x00FFFF);
+    createGUI();
 
     //character
     CHARACTER = new Character(scene, renderer, camera, dynamicObjects, physicsWorld);
@@ -131,7 +135,35 @@ function initPhysics() {
     transformAux1 = new Ammo.btTransform();
 
 }
+function createGUI() {
 
+    if (gui) {
+
+        gui.destroy();
+
+    }
+
+    gui = new GUI({ width: 350 });
+
+
+    const graphicsFolder = gui.addFolder("Graphics");
+
+    graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
+
+    scene.userData.ambientLightRGB = [
+        scene.userData.ambientLight.r * 255,
+        scene.userData.ambientLight.g * 255,
+        scene.userData.ambientLight.b * 255
+    ];
+    graphicsFolder.addColor(scene.userData, 'ambientLightRGB').name('Ambient Light').onChange(function (value) {
+
+        scene.userData.ambientLight.setRGB(value[0], value[1], value[2]).multiplyScalar(1 / 255);
+
+    });
+
+    graphicsFolder.open();
+
+}
 
 function _OnWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -164,7 +196,7 @@ function render() {
 
     const deltaTime = clock.getDelta();
 
-    
+
     updatePhysics(deltaTime);
 
     renderer.render(scene, camera);
