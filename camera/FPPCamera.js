@@ -1,6 +1,7 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { FPPControls } from '../controls/FPPControls.js';
-
+let posCamera;
+let rotCamera;
 
 class FPPCamera {
     constructor(render) {
@@ -20,6 +21,12 @@ class FPPCamera {
 
         this.camera = new THREE.PerspectiveCamera(this.fov, this.aspect, this.near, this.far);
         this.camera.position.set(0, 20, 0);
+        posCamera=this.camera.position;
+        rotCamera=this.camera.rotation;
+    }
+    restoreCamera(){
+        this.camera.position=posCamera;
+        this.camera.rotation=rotCamera;
     }
 
 }

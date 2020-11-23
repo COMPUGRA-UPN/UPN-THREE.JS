@@ -2,9 +2,17 @@ import * as THREE from '../node_modules/three/build/three.module.js';
 import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader.js';
 import { FPPControls } from '../controls/FPPControls.js';
 
+
 let controls;
 let controls2;
+let enableControls = true;
 let mixers;
+var posCameraX;
+var posCameraY;
+var posCameraZ;
+var rotCameraX;
+var rotCameraY;
+var rotCameraZ;
 let animationLoaded = false;
 const clock = new THREE.Clock();
 const clock1 = new THREE.Clock();
@@ -28,6 +36,8 @@ var Character = function (scene, render, camera, objects, physicsWorld) {
             const params = {
                 target: fbx,
             }
+
+
             controls = new FPPControls(fbx, this.renderT.domElement, true);
             controls.movementSpeed = 100;
             controls.lookSpeed = 0.1;
@@ -37,7 +47,7 @@ var Character = function (scene, render, camera, objects, physicsWorld) {
             controls2.lookSpeed = 0.1;
             controls2.lookVertical = false;
 
-            fbx.position.y=1;
+            fbx.position.y = 1;
 
             var shape = new Ammo.btConeShape(1, 1);//radius, height
             const localInertia = new Ammo.btVector3(0, 0, 0);
@@ -95,8 +105,17 @@ var Character = function (scene, render, camera, objects, physicsWorld) {
             if (animationLoaded) {
                 // console.log(this.fbx.rotation.y);
                 // console.log(this.camera.rotation.y);
-                controls.update(clock1.getDelta());
-                controls2.update(clock2.getDelta());
+                if (enableControls) {
+                    controls.update(clock1.getDelta());
+                    controls2.update(clock2.getDelta());
+                    
+                    posCameraX = this.camera.position.x;
+                    posCameraY = this.camera.position.y;
+                    posCameraZ = this.camera.position.z;
+                    rotCameraX = this.camera.rotation.x;
+                    rotCameraY = this.camera.rotation.y;
+                    rotCameraZ = this.camera.rotation.z;
+                }
                 // this.camera.rotation.y = this.fbx.rotation.y;
 
             }
@@ -106,6 +125,17 @@ var Character = function (scene, render, camera, objects, physicsWorld) {
             }
 
         });
+    }
+    this.enableControls = function (fppcamera) {
+        enableControls = fppcamera;
+    }
+    this.restoreCamera = function (camera) {
+        camera.position.x = posCameraX;
+        camera.position.y = posCameraY;
+        camera.position.z = posCameraZ;
+        camera.rotation.x = rotCameraX;
+        camera.rotation.y = rotCameraY;
+        camera.rotation.z = rotCameraZ;
     }
     this.TPPCamera = function (camera) {
         controls2 = new FPPControls(camera, this.renderT.domElement, false);

@@ -4,6 +4,7 @@ import FPPCamera from "./camera/FPPCamera.js";
 import TPPCamera from "./camera/TPPCamera.js";
 import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
 import { Character } from "./character/Character.js";
+import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 
 
 
@@ -14,6 +15,13 @@ let CHARACTER = null;
 // Graphics variables
 let container, stats;
 let camera, scene, renderer, gui;
+let orbitControls
+var posCameraX;
+var posCameraY;
+var posCameraZ;
+var rotCameraX;
+var rotCameraY;
+var rotCameraZ;
 
 const clock = new THREE.Clock();
 
@@ -52,7 +60,14 @@ function init() {
 
 
     camera = new FPPCamera(renderer);
+   
+    saveCamera();
+    orbitControls = new OrbitControls(camera, renderer.domElement);
+    orbitControls.enabled = false;
+    loadCamera();
 
+
+    
 
     scene = new THREE.Scene();
 
@@ -94,7 +109,7 @@ function init() {
     dynamicObjects.push(cube);
 
     physicsWorld.addRigidBody(body);
-    
+
     //gui
     scene.userData.fppCamera = true;
     scene.userData.ambientLight = new THREE.Color(0x00FFFF);
@@ -195,7 +210,16 @@ function animate2() {
 function render() {
 
     const deltaTime = clock.getDelta();
-
+    CHARACTER.enableControls(scene.userData.fppCamera);
+    if(scene.userData.fppCamera){
+        if(orbitControls.enabled){
+            CHARACTER.restoreCamera(camera);
+        }
+        orbitControls.enabled=false;
+    }else{
+        orbitControls.enabled=true;
+        orbitControls.update();
+    }
 
     updatePhysics(deltaTime);
 
@@ -225,5 +249,21 @@ function updatePhysics(deltaTime) {
         }
 
     }
+}
+function saveCamera(){
+    posCameraX = camera.position.x;
+    posCameraY = camera.position.y;
+    posCameraZ = camera.position.z;
+    rotCameraX = camera.rotation.x;
+    rotCameraY = camera.rotation.y;
+    rotCameraZ = camera.rotation.z;
+}
+function loadCamera(){
+    camera.position.x=posCameraX;
+    camera.position.y=posCameraY;
+    camera.position.z=posCameraZ;
+    camera.rotation.x=rotCameraX;
+    camera.rotation.y=rotCameraY;
+    camera.rotation.z=rotCameraZ;
 }
 
