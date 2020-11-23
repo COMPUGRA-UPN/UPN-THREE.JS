@@ -8,15 +8,16 @@ import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitC
 import CargarModelos from './models/loaders.js';
 
 
-
+const mouse = new THREE.Vector2();
 //instances
 let SCENE = null;
 let CHARACTER = null;
 let UPN = null;
+let INTERSECTED;
 
 // Graphics variables
 let container, stats;
-let camera, scene, renderer, gui;
+let camera, scene, raycaster, renderer, gui;
 let orbitControls
 var posCameraX;
 var posCameraY;
@@ -51,6 +52,7 @@ function init() {
     container = document.getElementById("canvas");
     document.body.appendChild(container);
 
+    raycaster = new THREE.Raycaster();
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -62,14 +64,14 @@ function init() {
 
 
     camera = new FPPCamera(renderer);
-   
+
     saveCamera();
     orbitControls = new OrbitControls(camera, renderer.domElement);
     orbitControls.enabled = false;
     loadCamera();
 
 
-    
+
 
     scene = new THREE.Scene();
 
@@ -85,10 +87,10 @@ function init() {
     const sx = 6;
     const sy = 6;
     const sz = 6;
-    // var geometry2 = new THREE.BoxGeometry(1, 1, 1);
+    const geometry = new THREE.BoxBufferGeometry(20, 20, 20);
     var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     // material.colorWrite=false;
-    cube = new THREE.Mesh(new THREE.BoxBufferGeometry(sx, sy, sz, 1, 1, 1), material);
+    cube = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
     cube.position.y = 80;
     cube.position.z = 0;
 
@@ -118,12 +120,25 @@ function init() {
     scene.userData.ambientLight = new THREE.Color(0x00FFFF);
     createGUI();
 
+    document.addEventListener('mousemove', onDocumentMouseMove, false);
+
     //character
     CHARACTER = new Character(scene, renderer, camera, dynamicObjects, physicsWorld);
     CHARACTER.loadCharacter('./models/boy/character.fbx');
     CHARACTER._RAF('./models/boy/walk.fbx');
 
 
+
+
+
+}
+function onDocumentMouseMove(event) {
+
+    event.preventDefault();
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    // console.log(mouse);
 
 }
 function initPhysics() {
@@ -214,17 +229,46 @@ function render() {
 
     const deltaTime = clock.getDelta();
     CHARACTER.enableControls(scene.userData.fppCamera);
-    if(scene.userData.fppCamera){
-        if(orbitControls.enabled){
+    if (scene.userData.fppCamera) {
+        if (orbitControls.enabled) {
             CHARACTER.restoreCamera(camera);
         }
-        orbitControls.enabled=false;
-    }else{
-        orbitControls.enabled=true;
+        orbitControls.enabled = false;
+    } else {
+        orbitControls.enabled = true;
         orbitControls.update();
     }
 
     updatePhysics(deltaTime);
+    //raycaster
+    raycaster.setFromCamera(mouse, camera);
+
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+
+        const targetDistance = intersects[0].distance;
+
+        // camera.focusAt(targetDistance); // using Cinematic camera focusAt method
+
+        if (INTERSECTED != intersects[0].object) {
+            
+            if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+
+            INTERSECTED = intersects[0].object;
+            INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+            INTERSECTED.material.emissive.setHex(0xff0000);
+            console.log(INTERSECTED);
+
+        }
+
+    } else {
+
+        if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+
+        INTERSECTED = null;
+
+    }
 
     renderer.render(scene, camera);
 
@@ -253,7 +297,7 @@ function updatePhysics(deltaTime) {
 
     }
 }
-function saveCamera(){
+function saveCamera() {
     posCameraX = camera.position.x;
     posCameraY = camera.position.y;
     posCameraZ = camera.position.z;
@@ -261,12 +305,12 @@ function saveCamera(){
     rotCameraY = camera.rotation.y;
     rotCameraZ = camera.rotation.z;
 }
-function loadCamera(){
-    camera.position.x=posCameraX;
-    camera.position.y=posCameraY;
-    camera.position.z=posCameraZ;
-    camera.rotation.x=rotCameraX;
-    camera.rotation.y=rotCameraY;
-    camera.rotation.z=rotCameraZ;
+function loadCamera() {
+    camera.position.x = posCameraX;
+    camera.position.y = posCameraY;
+    camera.position.z = posCameraZ;
+    camera.rotation.x = rotCameraX;
+    camera.rotation.y = rotCameraY;
+    camera.rotation.z = rotCameraZ;
 }
 
