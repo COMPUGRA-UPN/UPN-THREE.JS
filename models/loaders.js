@@ -4,12 +4,11 @@ import {GLTFLoader} from '../node_modules/three/examples/jsm/loaders/GLTFLoader.
 import {OrbitControls} from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 
 class CargarModelos{
-    
     constructor(scene) {
         this.scene=scene;
         //CARGAR ESTRUCTURAS GLB (ubicacion,nombre de archivo)
-        this._LoadModelGlb('./models/upn/','EdificioA.glb',180,3.15);
-        this._LoadModelGlb('./models/upn/','Plaza.glb',-100,0);
+        this._LoadModelGlb('./models/upn/','upnx.glb',0,0);
+        //this._LoadModelGlb('./models/upn/','Plaza.glb',-100,0);
         
         //Cargar Modelos Fbx Estaticos
         //this._LoadAnimatedModelAndPlay('./models/personajes/principal/','p_masculino.fbx','caminar.fbx', new THREE.Vector3(-16, 0, -14));
