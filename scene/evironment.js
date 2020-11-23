@@ -10,16 +10,16 @@ const terrainMinHeight = 0;
 let terrainMesh;
 let ammoHeightData = null;
 class LoadScene {
-    constructor(scene) {
+    constructor(scene,ambientLightColor) {
         this.scene = scene;
+        this.ambientLightColor = ambientLightColor;
         this.heightData=this.generateHeight();
         this._Initialize();
     }
 
     _Initialize() {
-        let l = new Lights();
-        this.scene.add(l.directionalLight);
-        this.scene.add(l.ambientLight);
+        let l = new Lights(this.scene,this.ambientLightColor);
+        console.log(this.ambientLightColor);
         const loader = new THREE.CubeTextureLoader();
         const texture = loader.load([
             './models/environment/resources/posx.jpg',
@@ -160,6 +160,9 @@ class LoadScene {
     }
     getTerrainMinHeight() {
         return terrainMinHeight;
+    }
+    updateLight(){
+        
     }
 }
 

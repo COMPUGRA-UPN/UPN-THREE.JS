@@ -75,10 +75,14 @@ function init() {
 
     scene = new THREE.Scene();
 
+    //gui
+    scene.userData.fppCamera = true;
+    scene.userData.ambientLight = new THREE.Color(0x00FFFF);
+    // console.log(scene.userData.ambientLight);
+    createGUI();
 
 
-
-    SCENE = new LoadScene(scene);
+    SCENE = new LoadScene(scene,scene.userData.ambientLight);
     UPN = new CargarModelos(scene);
 
     initPhysics();
@@ -115,10 +119,7 @@ function init() {
 
     physicsWorld.addRigidBody(body);
 
-    //gui
-    scene.userData.fppCamera = true;
-    scene.userData.ambientLight = new THREE.Color(0x00FFFF);
-    createGUI();
+    
 
     document.addEventListener('mousemove', onDocumentMouseMove, false);
 

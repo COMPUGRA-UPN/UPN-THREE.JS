@@ -6,6 +6,7 @@ import { FPPControls } from '../controls/FPPControls.js';
 let controls;
 let controls2;
 let enableControls = true;
+let inMove = false;
 let mixers;
 var posCameraX;
 var posCameraY;
@@ -97,10 +98,11 @@ var Character = function (scene, render, camera, objects, physicsWorld) {
             }
 
             this._RAF(path);
-
             const delta = clock.getDelta();
+            if(enableControls){
+                if (mixers) mixers.update(delta);
+            }
 
-            if (mixers) mixers.update(delta);
 
             // this.renderT.render(this.scene, this.camera);
             if (animationLoaded) {
@@ -126,6 +128,9 @@ var Character = function (scene, render, camera, objects, physicsWorld) {
             }
 
         });
+    }
+    this.moving = function (t) {
+        inMove=t;
     }
     this.enableControls = function (fppcamera) {
         enableControls = fppcamera;

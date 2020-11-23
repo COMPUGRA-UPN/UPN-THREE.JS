@@ -19,6 +19,7 @@ var FPPControls = function (object, domElement, invert) {
 	// API
 
 	this.enabled = true;
+	this.moving = false;
 
 	this.movementSpeed = 1.0;
 	this.lookSpeed = 0.005;
@@ -165,6 +166,7 @@ var FPPControls = function (object, domElement, invert) {
 			case 87: /*W*/
 				if (invert) {
 					this.moveBackward = true;
+					this.moving = true;
 					break;
 				}
 				this.moveForward = true;
@@ -174,6 +176,7 @@ var FPPControls = function (object, domElement, invert) {
 			case 65: /*A*/
 				if (invert) {
 					this.moveRight = true;
+					this.moving = true;
 					break;
 				}
 				this.moveLeft = true;
@@ -183,6 +186,7 @@ var FPPControls = function (object, domElement, invert) {
 			case 83: /*S*/
 				if (invert) {
 					this.moveForward = true;
+					this.moving = true;
 					break;
 				}
 				this.moveBackward = true;
@@ -192,6 +196,7 @@ var FPPControls = function (object, domElement, invert) {
 			case 68: /*D*/
 				if (invert) {
 					this.moveLeft = true;
+					this.moving = true;
 					break;
 				}
 				this.moveRight = true;
@@ -215,6 +220,7 @@ var FPPControls = function (object, domElement, invert) {
 					break;
 				}
 				this.moveForward = false;
+				this.moving = false;
 				break;
 
 			case 37: /*left*/
@@ -224,6 +230,7 @@ var FPPControls = function (object, domElement, invert) {
 					break;
 				}
 				this.moveLeft = false;
+				this.moving = false;
 				break;
 
 			case 40: /*down*/
@@ -233,6 +240,7 @@ var FPPControls = function (object, domElement, invert) {
 					break;
 				}
 				this.moveBackward = false;
+				this.moving = false;
 				break;
 
 			case 39: /*right*/
@@ -242,6 +250,7 @@ var FPPControls = function (object, domElement, invert) {
 					break;
 				}
 				this.moveRight = false;
+				this.moving = false;
 				break;
 
 			case 82: /*R*/

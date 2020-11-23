@@ -1,30 +1,39 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 
-class Lights{
-    constructor() {
-        this.directionalLight;
-        this.ambientLight;
+let spotLight;
+let ambientLight;
+let lightHelper;
+let shadowCameraHelper;
+class Lights {
+    constructor(scene,ambientLightColor) {
+        this.scene = scene;
+        this.ambientLightColor = ambientLightColor;
         this._Init();
     }
-    _Init(){
-        this.directionalLight = new THREE.DirectionalLight(0xFFFFFF,0.6);
-        this.directionalLight.position.set(-50, 200, -250);
-        this.directionalLight.target.position.set(0, 0, 0);
-        this.directionalLight.castShadow = true;
-        this.directionalLight.shadow.bias = -0.001;
-        this.directionalLight.shadow.mapSize.width = 200;
-        this.directionalLight.shadow.mapSize.height = 200;
-        this.directionalLight.shadow.camera.near = 0.1;
-        this.directionalLight.shadow.camera.far = 100.0;
-        this.directionalLight.shadow.camera.near = 0.5;
-        this.directionalLight.shadow.camera.far = 150.0;
-        this.directionalLight.shadow.camera.left = 150;
-        this.directionalLight.shadow.camera.right = -150;
-        this.directionalLight.shadow.camera.top = 150;
-        this.directionalLight.shadow.camera.bottom = -150;
-       
-        this.ambientLight = new THREE.AmbientLight(0xFFFFFF,0.5);
+    _Init() {
+        spotLight = new THREE.SpotLight(this.ambientLightColor, 1);
+        spotLight.position.set(15, 40, 35);
+        spotLight.angle = Math.PI / 4;
+        spotLight.penumbra = 0.1;
+        spotLight.decay = 2;
+        spotLight.distance = 200;
+        spotLight.castShadow = true;
+        spotLight.shadow.mapSize.width = 512;
+        spotLight.shadow.mapSize.height = 512;
+        spotLight.shadow.camera.near = 10;
+        spotLight.shadow.camera.far = 200;
+        spotLight.shadow.focus = 1;
+        this.scene.add(spotLight);
         
+        lightHelper = new THREE.SpotLightHelper(spotLight);
+        
+        this.scene.add(lightHelper);
+
+        
+        shadowCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+        // this.scene.add(shadowCameraHelper);
+        ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
+        this.scene.add(ambientLight);
     }
 }
 export default Lights;
