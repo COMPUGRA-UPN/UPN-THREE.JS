@@ -22,12 +22,12 @@ class LoadScene {
         this.scene.add(l.ambientLight);
         const loader = new THREE.CubeTextureLoader();
         const texture = loader.load([
-            '../models/environment/resources/posx.jpg',
-            '../models/environment/resources/negx.jpg',
-            '../models/environment/resources/posy.jpg',
-            '../models/environment/resources/negy.jpg',
-            '../models/environment/resources/posz.jpg',
-            '../models/environment/resources/negz.jpg',
+            './models/environment/resources/posx.jpg',
+            './models/environment/resources/negx.jpg',
+            './models/environment/resources/posy.jpg',
+            './models/environment/resources/negy.jpg',
+            './models/environment/resources/posz.jpg',
+            './models/environment/resources/negz.jpg',
         ]);
         this.scene.background = texture;
         const plane = new THREE.Mesh(

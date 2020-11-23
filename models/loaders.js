@@ -1,15 +1,12 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import {FBXLoader} from '../node_modules/three/examples/jsm/loaders/FBXLoader.js';
 import {GLTFLoader} from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import {OrbitControls} from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
-
 class CargarModelos{
-    
     constructor(scene) {
         this.scene=scene;
         //CARGAR ESTRUCTURAS GLB (ubicacion,nombre de archivo)
-        this._LoadModelGlb('./models/upn/','EdificioA.glb',180,3.15);
-        this._LoadModelGlb('./models/upn/','Plaza.glb',-100,0);
+        this._LoadModelGlb('./models/upn/','upnx.glb',-1,0);
+        //this._LoadModelGlb('./models/upn/','Plaza.glb',-100,0);
         
         //Cargar Modelos Fbx Estaticos
         //this._LoadAnimatedModelAndPlay('./models/personajes/principal/','p_masculino.fbx','caminar.fbx', new THREE.Vector3(-16, 0, -14));
@@ -64,14 +61,14 @@ class CargarModelos{
     //     });
     //   }
 
-    _LoadModelGlb(path,modelFile,posicionZ,rotacionY) {
+    _LoadModelGlb(path,modelFile,posicionY,rotacionY) {
         const loader = new GLTFLoader();
         loader.setPath(path);
         loader.load(modelFile, (gltf) => {
           gltf.scene.traverse(c => {
             c.castShadow = true;
           });
-          gltf.scene.translateZ(posicionZ);
+          gltf.scene.translateY(posicionY);
           gltf.scene.rotateY(rotacionY);
           this.scene.add(gltf.scene);
         });

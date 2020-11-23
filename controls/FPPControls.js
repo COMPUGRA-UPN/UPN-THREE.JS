@@ -20,7 +20,11 @@ var FPPControls = function (object, domElement, invert) {
 
 	this.enabled = true;
 
+<<<<<<< HEAD
 	this.movementSpeed = 1.0;
+=======
+	this.movementSpeed = 0.1;
+>>>>>>> origin/jose
 	this.lookSpeed = 0.005;
 
 	this.lookVertical = true;
