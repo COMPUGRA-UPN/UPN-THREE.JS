@@ -36,14 +36,15 @@ var Character = function (scene, render, camera, objects, physicsWorld) {
             const params = {
                 target: fbx,
             }
+            fbx.scale.setScalar(0.05);
 
 
             controls = new FPPControls(fbx, this.renderT.domElement, true);
-            controls.movementSpeed = 100;
+            controls.movementSpeed = 50;
             controls.lookSpeed = 0.1;
             controls.lookVertical = false;
             controls2 = new FPPControls(this.camera, this.renderT.domElement, false);
-            controls2.movementSpeed = 100;
+            controls2.movementSpeed = 50;
             controls2.lookSpeed = 0.1;
             controls2.lookVertical = false;
 
@@ -108,7 +109,7 @@ var Character = function (scene, render, camera, objects, physicsWorld) {
                 if (enableControls) {
                     controls.update(clock1.getDelta());
                     controls2.update(clock2.getDelta());
-                    
+
                     posCameraX = this.camera.position.x;
                     posCameraY = this.camera.position.y;
                     posCameraZ = this.camera.position.z;

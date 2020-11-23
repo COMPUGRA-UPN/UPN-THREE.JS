@@ -20,7 +20,7 @@ class FPPCamera {
     _Initialize() {
 
         this.camera = new THREE.PerspectiveCamera(this.fov, this.aspect, this.near, this.far);
-        this.camera.position.set(0, 20, 0);
+        this.camera.position.set(0, 6, 0);
         posCamera=this.camera.position;
         rotCamera=this.camera.rotation;
     }

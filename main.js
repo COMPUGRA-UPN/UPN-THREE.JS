@@ -5,12 +5,14 @@ import TPPCamera from "./camera/TPPCamera.js";
 import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
 import { Character } from "./character/Character.js";
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
+import CargarModelos from './models/loaders.js';
 
 
 
 //instances
 let SCENE = null;
 let CHARACTER = null;
+let UPN = null;
 
 // Graphics variables
 let container, stats;
@@ -75,6 +77,7 @@ function init() {
 
 
     SCENE = new LoadScene(scene);
+    UPN = new CargarModelos(scene);
 
     initPhysics();
 
