@@ -11,7 +11,7 @@ class Lights {
         this._Init();
     }
     _Init() {
-        spotLight = new THREE.SpotLight(this.ambientLightColor, 1);
+        spotLight = new THREE.SpotLight(this.ambientLightColor, 10);
         spotLight.position.set(15, 40, 35);
         spotLight.angle = Math.PI / 4;
         spotLight.penumbra = 0.1;
@@ -23,7 +23,7 @@ class Lights {
         spotLight.shadow.camera.near = 10;
         spotLight.shadow.camera.far = 200;
         spotLight.shadow.focus = 1;
-        this.scene.add(spotLight);
+        // this.scene.add(spotLight);
         
         lightHelper = new THREE.SpotLightHelper(spotLight);
         
@@ -33,7 +33,10 @@ class Lights {
         shadowCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
         // this.scene.add(shadowCameraHelper);
         ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
-        this.scene.add(ambientLight);
+        // this.scene.add(ambientLight);
+    }
+    updateLigths(){
+        spotLight.color.setHex( this.ambientLightColor );
     }
 }
 export default Lights;

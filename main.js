@@ -15,6 +15,10 @@ let CHARACTER = null;
 let UPN = null;
 let INTERSECTED;
 
+// lights
+let spotLight;
+let ambientLight;
+
 // Graphics variables
 let container, stats;
 let camera, scene, raycaster, renderer, gui;
@@ -75,6 +79,23 @@ function init() {
 
     scene = new THREE.Scene();
 
+    spotLight = new THREE.SpotLight(0xffffff, 1);
+    spotLight.position.set(15, 40, 35);
+    spotLight.angle = Math.PI / 4;
+    spotLight.penumbra = 0.1;
+    spotLight.decay = 2;
+    spotLight.distance = 200;
+    spotLight.castShadow = true;
+    spotLight.shadow.mapSize.width = 512;
+    spotLight.shadow.mapSize.height = 512;
+    spotLight.shadow.camera.near = 10;
+    spotLight.shadow.camera.far = 200;
+    spotLight.shadow.focus = 1;
+    scene.add(spotLight);
+
+    ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
+    scene.add(ambientLight);
+
     //gui
     scene.userData.fppCamera = true;
     scene.userData.ambientLight = new THREE.Color(0x00FFFF);
@@ -82,7 +103,7 @@ function init() {
     createGUI();
 
 
-    SCENE = new LoadScene(scene,scene.userData.ambientLight);
+    SCENE = new LoadScene(scene, scene.userData.ambientLight);
     UPN = new CargarModelos(scene);
 
     initPhysics();
@@ -119,7 +140,7 @@ function init() {
 
     physicsWorld.addRigidBody(body);
 
-    
+
 
     document.addEventListener('mousemove', onDocumentMouseMove, false);
 
@@ -184,15 +205,49 @@ function createGUI() {
 
     graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
 
-    scene.userData.ambientLightRGB = [
-        scene.userData.ambientLight.r * 255,
-        scene.userData.ambientLight.g * 255,
-        scene.userData.ambientLight.b * 255
-    ];
-    graphicsFolder.addColor(scene.userData, 'ambientLightRGB').name('Ambient Light').onChange(function (value) {
 
-        scene.userData.ambientLight.setRGB(value[0], value[1], value[2]).multiplyScalar(1 / 255);
+    const params = {
+        'light color': spotLight.color.getHex(),
+        intensity: spotLight.intensity,
+        distance: spotLight.distance,
+        angle: spotLight.angle,
+        penumbra: spotLight.penumbra,
+        decay: spotLight.decay,
+        focus: spotLight.shadow.focus
+    };
+    graphicsFolder.addColor(params, 'light color').name('SpotLight Light').onChange(function (val) {
+        spotLight.color.setHex(val);
+    });
+    graphicsFolder.add(params, 'intensity', 0, 2).onChange(function (val) {
+        spotLight.intensity = val;
+        render1();
+    });
+    graphicsFolder.add(params, 'distance', 50, 200).onChange(function (val) {
+        spotLight.distance = val;
+        render1();
+    });
+    graphicsFolder.add(params, 'angle', 0, Math.PI / 3).onChange(function (val) {
+        spotLight.angle = val;
+        render1();
+    });
+    graphicsFolder.add(params, 'penumbra', 0, 1).onChange(function (val) {
+        spotLight.penumbra = val;
+        render1();
+    });
+    graphicsFolder.add(params, 'decay', 1, 2).onChange(function (val) {
+        spotLight.decay = val;
+        render1();
+    });
+    graphicsFolder.add(params, 'focus', 0, 1).onChange(function (val) {
+        spotLight.shadow.focus = val;
+        render1();
+    });
 
+    const params2 = {
+        'light color': ambientLight.color.getHex(),
+    };
+    graphicsFolder.addColor(params2, 'light color').name('Ambient Light').onChange(function (val) {
+        ambientLight.color.setHex(val);
     });
 
     graphicsFolder.open();
@@ -239,6 +294,7 @@ function render() {
         orbitControls.enabled = true;
         orbitControls.update();
     }
+    // SCENE.updateLight();
 
     updatePhysics(deltaTime);
     //raycaster
@@ -253,7 +309,7 @@ function render() {
         // camera.focusAt(targetDistance); // using Cinematic camera focusAt method
 
         if (INTERSECTED != intersects[0].object) {
-            
+
             if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
 
             INTERSECTED = intersects[0].object;

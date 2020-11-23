@@ -9,6 +9,7 @@ const terrainMaxHeight = 0;
 const terrainMinHeight = 0;
 let terrainMesh;
 let ammoHeightData = null;
+let l;
 class LoadScene {
     constructor(scene,ambientLightColor) {
         this.scene = scene;
@@ -18,7 +19,7 @@ class LoadScene {
     }
 
     _Initialize() {
-        let l = new Lights(this.scene,this.ambientLightColor);
+        l = new Lights(this.scene,this.ambientLightColor);
         console.log(this.ambientLightColor);
         const loader = new THREE.CubeTextureLoader();
         const texture = loader.load([
@@ -162,7 +163,7 @@ class LoadScene {
         return terrainMinHeight;
     }
     updateLight(){
-        
+        l.updateLight();
     }
 }
 
