@@ -12,8 +12,8 @@ class Lights {
     }
     _Init() {
         spotLight = new THREE.SpotLight(this.ambientLightColor, 10);
-        spotLight.position.set(15, 40, 35);
-        spotLight.angle = Math.PI / 4;
+        spotLight.position.set(200, 200, 200);
+        spotLight.angle = Math.PI / 2;
         spotLight.penumbra = 0.1;
         spotLight.decay = 2;
         spotLight.distance = 200;
@@ -23,11 +23,12 @@ class Lights {
         spotLight.shadow.camera.near = 10;
         spotLight.shadow.camera.far = 200;
         spotLight.shadow.focus = 1;
+        
         // this.scene.add(spotLight);
         
         lightHelper = new THREE.SpotLightHelper(spotLight);
         
-        this.scene.add(lightHelper);
+        //this.scene.add(lightHelper);
 
         
         shadowCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);

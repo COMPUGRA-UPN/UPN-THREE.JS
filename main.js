@@ -78,13 +78,13 @@ function init() {
 
 
     scene = new THREE.Scene();
-
+    //Luces
     spotLight = new THREE.SpotLight(0xffffff, 1);
-    spotLight.position.set(15, 40, 35);
-    spotLight.angle = Math.PI / 4;
+    spotLight.position.set(205, 168, 347);
+    spotLight.angle = Math.PI / 3;
     spotLight.penumbra = 0.1;
-    spotLight.decay = 2;
-    spotLight.distance = 200;
+    spotLight.decay = 3;
+    spotLight.distance = 600;
     spotLight.castShadow = true;
     spotLight.shadow.mapSize.width = 512;
     spotLight.shadow.mapSize.height = 512;
@@ -208,46 +208,64 @@ function createGUI() {
 
     const params = {
         'light color': spotLight.color.getHex(),
-        intensity: spotLight.intensity,
-        distance: spotLight.distance,
-        angle: spotLight.angle,
-        penumbra: spotLight.penumbra,
-        decay: spotLight.decay,
-        focus: spotLight.shadow.focus
+        Intensidad: spotLight.intensity,
+        Distancia: spotLight.distance,
+        Angulo: spotLight.angle,
+        Penumbra: spotLight.penumbra,
+        Decadencia: spotLight.decay,
+        Foco: spotLight.shadow.focus,
+        PosX: spotLight.position.x,
+        PosY: spotLight.position.y,
+        PosZ: spotLight.position.z
     };
-    graphicsFolder.addColor(params, 'light color').name('SpotLight Light').onChange(function (val) {
+    graphicsFolder.addColor(params, 'light color').name('Color de Iluminacion').onChange(function (val) {
         spotLight.color.setHex(val);
     });
-    graphicsFolder.add(params, 'intensity', 0, 2).onChange(function (val) {
+    graphicsFolder.add(params, 'Intensidad', 0, 10).name(' Intensidad de Iluminación').onChange(function (val) {
         spotLight.intensity = val;
-        render1();
     });
-    graphicsFolder.add(params, 'distance', 50, 200).onChange(function (val) {
+    graphicsFolder.add(params, 'Distancia', 50, 1000).onChange(function (val) {
         spotLight.distance = val;
-        render1();
     });
-    graphicsFolder.add(params, 'angle', 0, Math.PI / 3).onChange(function (val) {
+    graphicsFolder.add(params, 'Angulo', 0, Math.PI / 2).onChange(function (val) {
         spotLight.angle = val;
-        render1();
     });
-    graphicsFolder.add(params, 'penumbra', 0, 1).onChange(function (val) {
+    graphicsFolder.add(params, 'Penumbra', 0, 1).onChange(function (val) {
         spotLight.penumbra = val;
-        render1();
     });
-    graphicsFolder.add(params, 'decay', 1, 2).onChange(function (val) {
+    graphicsFolder.add(params, 'Decadencia', 1, 2).onChange(function (val) {
         spotLight.decay = val;
-        render1();
     });
-    graphicsFolder.add(params, 'focus', 0, 1).onChange(function (val) {
+    graphicsFolder.add(params, 'Foco', 0, 1).onChange(function (val) {
         spotLight.shadow.focus = val;
-        render1();
+    });
+    graphicsFolder.add(params, 'PosX', 0, 300).onChange(function (val) {
+        spotLight.position.x = val;
+    });
+    graphicsFolder.add(params, 'PosY', 0, 500).onChange(function (val) {
+        spotLight.position.y = val;
+    });
+    graphicsFolder.add(params, 'PosZ', -200, 600).onChange(function (val) {
+        spotLight.position.z = val;
     });
 
-    const params2 = {
+
+   /* const params2 = {
         'light color': ambientLight.color.getHex(),
     };
-    graphicsFolder.addColor(params2, 'light color').name('Ambient Light').onChange(function (val) {
+    graphicsFolder.addColor(params2, 'light color').name('Luz de Ambiente').onChange(function (val) {
         ambientLight.color.setHex(val);
+    });*/
+    const params2 = {
+        'light color': ambientLight.color.getHex(),
+        intensity: ambientLight.intensity
+    };
+    graphicsFolder.addColor(params2, 'light color').name('Luz Ambiental').onChange(function (val) {
+        ambientLight.color.setHex(val);
+    });
+    graphicsFolder.add(params2, 'intensity', 0, 1.5).name(' Intensidad Luz Ambiental').onChange(function (val) {
+        ambientLight.intensity = val;
+        
     });
 
     graphicsFolder.open();
