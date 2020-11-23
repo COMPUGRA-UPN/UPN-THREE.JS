@@ -112,7 +112,7 @@ function init() {
     const sx = 6;
     const sy = 6;
     const sz = 6;
-    const geometry = new THREE.BoxBufferGeometry(20, 20, 20);
+    const geometry = new THREE.BoxBufferGeometry(sx, sy, sz);
     var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     // material.colorWrite=false;
     cube = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
