@@ -290,10 +290,10 @@ function render() {
 
         const targetDistance = intersects[0].distance;
 
-        // camera.focusAt(targetDistance); // using Cinematic camera focusAt method
+        //camera.focusAt(targetDistance); // using Cinematic camera focusAt method
 
         if (INTERSECTED != intersects[0].object) {
-            if (INTERSECTED != null) {
+            if (intersects[0].object.material.emissive != null) {
 
                 if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
 
