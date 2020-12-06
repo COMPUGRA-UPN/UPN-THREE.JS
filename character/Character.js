@@ -18,13 +18,11 @@ let animationLoaded = false;
 const clock = new THREE.Clock();
 const clock1 = new THREE.Clock();
 const clock2 = new THREE.Clock();
-var Character = function (scene, render, camera, objects, physicsWorld) {
+var Character = function (scene, render, camera) {
     this._previousRAF = null;
     this.scene = scene;
     this.camera = camera;
     this.renderT = render;
-    this.objects = objects;
-    this.physicsWorld = physicsWorld;
     this.fbx = null;
     this.loadCharacter = function (path) {
         const loader = new FBXLoader();
@@ -51,27 +49,10 @@ var Character = function (scene, render, camera, objects, physicsWorld) {
 
             fbx.position.y = 1;
 
-            var shape = new Ammo.btConeShape(1, 1);//radius, height
-            const localInertia = new Ammo.btVector3(0, 0, 0);
-            shape.calculateLocalInertia(10, localInertia);
-            const transform = new Ammo.btTransform();
-            transform.setIdentity();
-            const pos = fbx.position;
-            transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-            const motionState = new Ammo.btDefaultMotionState(transform);
-            const rbInfo = new Ammo.btRigidBodyConstructionInfo(2, motionState, shape, localInertia);
-            const body = new Ammo.btRigidBody(rbInfo);
-
-            fbx.userData.physicsBody = body;
-
             fbx.receiveShadow = true;
             fbx.castShadow = true;
 
             this.scene.add(fbx);
-            // this.objects.push(fbx);
-
-            this.physicsWorld.addRigidBody(body);
-
             this.fbx = fbx;
         });
         console.log(this.fbx);

@@ -1,4 +1,4 @@
-import * as THREE from './node_modules/three/build/three.module.js';
+
 import LoadScene from "./scene/evironment.js";
 import FPPCamera from "./camera/FPPCamera.js";
 import TPPCamera from "./camera/TPPCamera.js";
@@ -32,23 +32,18 @@ var rotCameraZ;
 
 const clock = new THREE.Clock();
 
-// Physics variables
-let collisionConfiguration;
-let dispatcher;
-let broadphase;
-let solver;
-let physicsWorld;
-const dynamicObjects = [];
-let transformAux1;
-var cube;
+let world;
+let debugRenderer;
+let timeStamp = 1.0 / 60.0;
+let boxBody;
+let bMesh;
 
 
-Ammo().then(function (AmmoLib) {
-    Ammo = AmmoLib;
-    init();
-    window.requestIdleCallback(animate);
 
-});
+init();
+window.requestIdleCallback(animate);
+
+
 // init();
 // window.requestIdleCallback(animate);
 // window.requestIdleCallback(animate2);
@@ -106,46 +101,35 @@ function init() {
     SCENE = new LoadScene(scene, scene.userData.ambientLight);
     UPN = new CargarModelos(scene);
 
-    initPhysics();
+    world = new CANNON.World();
+    world.gravity.set(0, -0.1, 0);
+    world.broadphase = new CANNON.NaiveBroadphase();
 
-    //temporal cube
-    const sx = 6;
-    const sy = 6;
-    const sz = 6;
-    const geometry = new THREE.BoxBufferGeometry(sx, sy, sz);
-    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // material.colorWrite=false;
-    cube = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
-    cube.position.y = 80;
-    cube.position.z = 0;
+    let plane = new CANNON.Plane();
+    let planebody = new CANNON.Body({ shape: plane, mass: 0 });
+    planebody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+    world.addBody(planebody);
 
-    var shape = new Ammo.btConeShape(1, sy);//radius, height
-    const localInertia = new Ammo.btVector3(0, 0, 0);
-    shape.calculateLocalInertia(10, localInertia);
-    const transform = new Ammo.btTransform();
-    transform.setIdentity();
-    const pos = cube.position;
-    transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-    const motionState = new Ammo.btDefaultMotionState(transform);
-    const rbInfo = new Ammo.btRigidBodyConstructionInfo(2, motionState, shape, localInertia);
-    const body = new Ammo.btRigidBody(rbInfo);
+    let box = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+    boxBody = new CANNON.Body({ shape: box, mass: 5 });
+    boxBody.position.set(0, 5, 0);
+    world.addBody(boxBody);
 
-    cube.userData.physicsBody = body;
+    let bGeo = new THREE.BoxGeometry(1, 1, 1);
+    let bMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+    bMesh = new THREE.Mesh(bGeo, bMat);
+    scene.add(bMesh);
 
-    cube.receiveShadow = true;
-    cube.castShadow = true;
 
-    scene.add(cube);
-    dynamicObjects.push(cube);
+    debugRenderer = new THREE.CannonDebugRenderer(scene, world);
 
-    physicsWorld.addRigidBody(body);
 
 
 
     document.addEventListener('mousemove', onDocumentMouseMove, false);
 
     //character
-    CHARACTER = new Character(scene, renderer, camera, dynamicObjects, physicsWorld);
+    CHARACTER = new Character(scene, renderer, camera);
     CHARACTER.loadCharacter('./models/boy/character.fbx');
     CHARACTER._RAF('./models/boy/walk.fbx');
 
@@ -161,33 +145,6 @@ function onDocumentMouseMove(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
     // console.log(mouse);
-
-}
-function initPhysics() {
-
-    // Physics configuration
-
-    collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
-    dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
-    broadphase = new Ammo.btDbvtBroadphase();
-    solver = new Ammo.btSequentialImpulseConstraintSolver();
-    physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-    physicsWorld.setGravity(new Ammo.btVector3(0, - 9.8, 0));
-
-    // Create the terrain body
-
-    const groundShape = SCENE.createTerrainShape();
-    const groundTransform = new Ammo.btTransform();
-    groundTransform.setIdentity();
-    // Shifts the terrain, since bullet re-centers it on its bounding box.
-    groundTransform.setOrigin(new Ammo.btVector3(0, (SCENE.getTerrainMaxHeight() + SCENE.getTerrainMinHeight()) / 2, 0));
-    const groundMass = 0;
-    const groundLocalInertia = new Ammo.btVector3(0, 0, 0);
-    const groundMotionState = new Ammo.btDefaultMotionState(groundTransform);
-    const groundBody = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(groundMass, groundMotionState, groundShape, groundLocalInertia));
-    physicsWorld.addRigidBody(groundBody);
-
-    transformAux1 = new Ammo.btTransform();
 
 }
 function createGUI() {
@@ -250,12 +207,12 @@ function createGUI() {
     });
 
 
-   /* const params2 = {
-        'light color': ambientLight.color.getHex(),
-    };
-    graphicsFolder.addColor(params2, 'light color').name('Luz de Ambiente').onChange(function (val) {
-        ambientLight.color.setHex(val);
-    });*/
+    /* const params2 = {
+         'light color': ambientLight.color.getHex(),
+     };
+     graphicsFolder.addColor(params2, 'light color').name('Luz de Ambiente').onChange(function (val) {
+         ambientLight.color.setHex(val);
+     });*/
     const params2 = {
         'light color': ambientLight.color.getHex(),
         intensity: ambientLight.intensity
@@ -265,7 +222,7 @@ function createGUI() {
     });
     graphicsFolder.add(params2, 'intensity', 0, 1.5).name(' Intensidad Luz Ambiental').onChange(function (val) {
         ambientLight.intensity = val;
-        
+
     });
 
     graphicsFolder.open();
@@ -300,7 +257,9 @@ function animate2() {
 
 }
 function render() {
-
+    world.step(timeStamp);
+    bMesh.position.copy(boxBody.position);
+    debugRenderer.update();
     const deltaTime = clock.getDelta();
     CHARACTER.enableControls(scene.userData.fppCamera);
     if (scene.userData.fppCamera) {
@@ -314,7 +273,6 @@ function render() {
     }
     // SCENE.updateLight();
 
-    updatePhysics(deltaTime);
     //raycaster
     raycaster.setFromCamera(mouse, camera);
 
@@ -327,14 +285,15 @@ function render() {
         // camera.focusAt(targetDistance); // using Cinematic camera focusAt method
 
         if (INTERSECTED != intersects[0].object) {
+            if (INTERSECTED != null) {
 
-            if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+                if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
 
-            INTERSECTED = intersects[0].object;
-            INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-            INTERSECTED.material.emissive.setHex(0xff0000);
-            console.log(INTERSECTED);
-
+                INTERSECTED = intersects[0].object;
+                INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                INTERSECTED.material.emissive.setHex(0xff0000);
+                console.log(INTERSECTED);
+            }
         }
 
     } else {
@@ -348,29 +307,6 @@ function render() {
     renderer.render(scene, camera);
 
 
-}
-
-function updatePhysics(deltaTime) {
-
-    physicsWorld.stepSimulation(deltaTime, 10);
-
-    // Update objects
-    for (let i = 0, il = dynamicObjects.length; i < il; i++) {
-
-        const objThree = dynamicObjects[i];
-        const objPhys = objThree.userData.physicsBody;
-        const ms = objPhys.getMotionState();
-        if (ms) {
-
-            ms.getWorldTransform(transformAux1);
-            const p = transformAux1.getOrigin();
-            const q = transformAux1.getRotation();
-            objThree.position.set(p.x(), p.y(), p.z());
-            objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
-
-        }
-
-    }
 }
 function saveCamera() {
     posCameraX = camera.position.x;

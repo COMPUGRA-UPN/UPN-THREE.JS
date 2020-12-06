@@ -5,6 +5,7 @@ class CargarModelos {
   constructor(scene) {
     this.scene = scene;
     //CARGAR ESTRUCTURAS GLB (ubicacion,nombre de archivo)
+    
     this._LoadModelGlb('./models/upn/', 'upnx.glb', -1, 0);
     //this._LoadModelGlb('./models/upn/','Plaza.glb',-100,0);
 
@@ -62,6 +63,7 @@ class CargarModelos {
   //   }
 
   _LoadModelGlb(path, modelFile, posicionY, rotacionY) {
+    // const world = new Sketchbook.World('./models/upn/upnx.glb');
     const loader = new GLTFLoader();
     loader.setPath(path);
     loader.load(modelFile, (gltf) => {
