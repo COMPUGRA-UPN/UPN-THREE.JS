@@ -31,14 +31,15 @@ class LoadScene {
             './models/environment/resources/negz.jpg',
         ]);
         this.scene.background = texture;
-        const plane = new THREE.Mesh(
-            new THREE.PlaneGeometry(100, 100, 10, 10),
-            new THREE.MeshLambertMaterial({
-                color: 0xF30FFF, side: THREE.DoubleSide,
-            }));
-        plane.castShadow = false;
-        plane.receiveShadow = true;
-        plane.rotation.x = -Math.PI / 2;
+        const material = new THREE.MeshBasicMaterial( { color: 0xfd6565, envMap: texture } );
+        // const plane = new THREE.Mesh(
+        //     new THREE.PlaneGeometry(100, 100, 10, 10),
+        //     new THREE.MeshLambertMaterial({
+        //         color: 0xF30FFF, side: THREE.DoubleSide,
+        //     }));
+        // plane.castShadow = false;
+        // plane.receiveShadow = true;
+        // plane.rotation.x = -Math.PI / 2;
         // this.scene.add(plane);
         //GROUND
         const geometry = new THREE.PlaneBufferGeometry(terrainWidthExtents, terrainDepthExtents, terrainWidth - 1, terrainDepth - 1);

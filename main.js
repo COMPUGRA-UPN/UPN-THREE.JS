@@ -90,12 +90,12 @@ function init() {
     spotLight.shadow.focus = 1;
     scene.add(spotLight);
 
-    ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
+    ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7);
     scene.add(ambientLight);
 
     //gui
     scene.userData.fppCamera = true;
-    scene.userData.ambientLight = new THREE.Color(0x00FFFF);
+    //scene.userData.ambientLight = new THREE.Color(0x00FFFF);
     // console.log(scene.userData.ambientLight);
     createGUI();
 
@@ -114,7 +114,7 @@ function init() {
 
 
 
-    let box = new CANNON.Box(new CANNON.Vec3(5, 5, 5));
+    let box = new CANNON.Box(new CANNON.Vec3(3, 3, 3));
     boxBody = new CANNON.Body({ shape: box, mass: 2 });
     boxBody.position.set(5, 5, 5);
     world.addBody(boxBody);
@@ -124,7 +124,7 @@ function init() {
     // boxCBody = new CANNON.Body({ shape: boxc, mass: 5 });
     // boxCBody.position.set(0,15, 0);
     // world.addBody(boxCBody);
-    var mass = 6, radius = 5;
+    var mass = 10, radius = 5;
     sphereShape = new CANNON.Sphere(radius);
     sphereBody = new CANNON.Body({ mass: mass });
     sphereBody.addShape(sphereShape);

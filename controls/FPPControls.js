@@ -7,10 +7,8 @@ import {
 var FPPControls = function (object, domElement, invert) {
 
 	if (domElement === undefined) {
-
 		console.warn('THREE.FirstPersonControls: The second parameter "domElement" is now mandatory.');
 		domElement = document;
-
 	}
 
 	this.object = object;
