@@ -34,7 +34,7 @@ class LoadScene {
         const plane = new THREE.Mesh(
             new THREE.PlaneGeometry(100, 100, 10, 10),
             new THREE.MeshLambertMaterial({
-                color: 0x202020, side: THREE.DoubleSide,
+                color: 0xF30FFF, side: THREE.DoubleSide,
             }));
         plane.castShadow = false;
         plane.receiveShadow = true;

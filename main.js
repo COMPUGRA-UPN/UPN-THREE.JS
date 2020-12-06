@@ -7,13 +7,13 @@ import { Character } from "./character/Character.js";
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import CargarModelos from './models/loaders.js';
 
-
 const mouse = new THREE.Vector2();
 //instances
 let SCENE = null;
 let CHARACTER = null;
 let UPN = null;
 let INTERSECTED;
+var controls,time = Date.now();
 
 // lights
 let spotLight;
@@ -37,6 +37,7 @@ let debugRenderer;
 let timeStamp = 1.0 / 60.0;
 let boxBody;
 let boxCBody;
+var sphereShape, sphereBody;
 let bMesh;
 
 
@@ -103,7 +104,7 @@ function init() {
     UPN = new CargarModelos(scene);
 
     world = new CANNON.World();
-    world.gravity.set(0, -4, 0);
+    world.gravity.set(0, -9.8, 0);
     world.broadphase = new CANNON.NaiveBroadphase();
 
     let plane = new CANNON.Plane();
@@ -111,19 +112,32 @@ function init() {
     planebody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
     world.addBody(planebody);
 
-    let box = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
-    boxBody = new CANNON.Body({ shape: box, mass: 5 });
-    boxBody.position.set(0, 5, 5);
+
+
+    let box = new CANNON.Box(new CANNON.Vec3(5, 5, 5));
+    boxBody = new CANNON.Body({ shape: box, mass: 2 });
+    boxBody.position.set(5, 5, 5);
     world.addBody(boxBody);
 
+    
+    // let boxc = new CANNON.Box(new CANNON.Vec3(1, 4, 1));
+    // boxCBody = new CANNON.Body({ shape: boxc, mass: 5 });
+    // boxCBody.position.set(0,15, 0);
+    // world.addBody(boxCBody);
+    var mass = 6, radius = 5;
+    sphereShape = new CANNON.Sphere(radius);
+    sphereBody = new CANNON.Body({ mass: mass });
+    sphereBody.addShape(sphereShape);
+    sphereBody.position.set(0,5,0);
+    sphereBody.linearDamping = 0.9;
+    world.addBody(sphereBody);
 
-    let boxc = new CANNON.Box(new CANNON.Vec3(1, 4, 1));
-    boxCBody = new CANNON.Body({ shape: boxc, mass: 10 });
-    boxCBody.position.set(0,15, 0);
-    world.addBody(boxCBody);
+    controls = new PointerLockControls( camera , sphereBody );
+    scene.add( controls.getObject() );
+    controls.enabled=true;
 
 
-    let bGeo = new THREE.BoxGeometry(1, 1, 1);
+    let bGeo = new THREE.BoxGeometry(5, 5, 5);
     let bMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
     bMesh = new THREE.Mesh(bGeo, bMat);
     scene.add(bMesh);
@@ -266,19 +280,25 @@ function animate2() {
 }
 function render() {
     world.step(timeStamp);
+    //controls.update();
+    controls.update( Date.now() - time );
+    time = Date.now();
+    
     bMesh.position.copy(boxBody.position);
+    bMesh.quaternion.copy(boxBody.quaternion);
+
     debugRenderer.update();
     const deltaTime = clock.getDelta();
-    CHARACTER.enableControls(scene.userData.fppCamera);
-    if (scene.userData.fppCamera) {
-        if (orbitControls.enabled) {
-            CHARACTER.restoreCamera(camera);
-        }
-        orbitControls.enabled = false;
-    } else {
-        orbitControls.enabled = true;
-        orbitControls.update();
-    }
+    // CHARACTER.enableControls(scene.userData.fppCamera);
+    // if (scene.userData.fppCamera) {
+    //     if (orbitControls.enabled) {
+    //         CHARACTER.restoreCamera(camera);
+    //     }
+    //     orbitControls.enabled = false;
+    // } else {
+    //     orbitControls.enabled = true;
+    //     orbitControls.update();
+    // }
     // SCENE.updateLight();
 
     //raycaster
