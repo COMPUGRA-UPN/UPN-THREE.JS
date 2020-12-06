@@ -47,7 +47,7 @@ var Character = function (scene, render, camera) {
             controls2.lookSpeed = 0.1;
             controls2.lookVertical = false;
 
-            fbx.position.y = 1;
+            fbx.position.y = 0;
 
             fbx.receiveShadow = true;
             fbx.castShadow = true;

@@ -36,6 +36,7 @@ let world;
 let debugRenderer;
 let timeStamp = 1.0 / 60.0;
 let boxBody;
+let boxCBody;
 let bMesh;
 
 
@@ -102,7 +103,7 @@ function init() {
     UPN = new CargarModelos(scene);
 
     world = new CANNON.World();
-    world.gravity.set(0, -0.1, 0);
+    world.gravity.set(0, -4, 0);
     world.broadphase = new CANNON.NaiveBroadphase();
 
     let plane = new CANNON.Plane();
@@ -112,8 +113,15 @@ function init() {
 
     let box = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
     boxBody = new CANNON.Body({ shape: box, mass: 5 });
-    boxBody.position.set(0, 5, 0);
+    boxBody.position.set(0, 5, 5);
     world.addBody(boxBody);
+
+
+    let boxc = new CANNON.Box(new CANNON.Vec3(1, 4, 1));
+    boxCBody = new CANNON.Body({ shape: boxc, mass: 10 });
+    boxCBody.position.set(0,15, 0);
+    world.addBody(boxCBody);
+
 
     let bGeo = new THREE.BoxGeometry(1, 1, 1);
     let bMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
