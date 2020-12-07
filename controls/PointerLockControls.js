@@ -6,7 +6,7 @@ var PointerLockControls = function (camera, cannonBody) {
 
     var eyeYPos = 2; // eyes are 2 meters above the ground
     var velocityFactor = 1.0;
-    var jumpVelocity = 15;
+    var jumpVelocity = 30;
     var scope = this;
 
     var pitchObject = new THREE.Object3D();

@@ -78,6 +78,9 @@ class CargarModelos {
       objects.push(gltf.scene.getObjectByName("panel2"));
       objects.push(gltf.scene.getObjectByName("estante1"));
       objects.push(gltf.scene.getObjectByName("estante2"));
+      objects.push(gltf.scene.getObjectByName("book1"));
+      objects.push(gltf.scene.getObjectByName("book2"));
+      objects.push(gltf.scene.getObjectByName("caja"));
       for (let i = 1; i <= 12; i++) {
         var escalon = "escalon" + i.toString();
         objects.push(gltf.scene.getObjectByName(escalon));
@@ -125,7 +128,7 @@ class CargarModelos {
         }
       }
       objects.push(gltf.scene.getObjectByName("plaza"));
-      for (let i = 1; i <= 6; i++) {
+      for (let i = 1; i <= 9; i++) {
         var p = "piso" + i.toString();
         var pared = gltf.scene.getObjectByName(p);
         if (pared.type == "Mesh") {
@@ -135,34 +138,27 @@ class CargarModelos {
           this.scene.add(pared);
         }
       }
+      for (let i = 1; i <= 9; i++) {
+        var p = "paredb" + i.toString();
+        var pared = gltf.scene.getObjectByName(p);
+        if (p != "paredb4") {
+          if (pared.type == "Mesh") {
+            objects.push(pared);
+          } else {
+            console.log(pared);
+            this.scene.add(pared);
+          }
+        }
+      }
       objects.push(gltf.scene.getObjectByName("pisob1"));
       objects.push(gltf.scene.getObjectByName("computadora1"));
       objects.push(gltf.scene.getObjectByName("cajita1"));
       objects.push(gltf.scene.getObjectByName("sofa1"));
-      for (let i = 1; i <= 5; i++) {
-        var p = "mesa" + i.toString();
-        var pared = gltf.scene.getObjectByName(p);
-        if (pared.type == "Mesh") {
-          objects.push(pared);
-        } else {
-          console.log(pared);
-          this.scene.add(pared);
-        }
-      }
-      // for (let i = 1; i <= 5; i++) {
-      //   var p = "libro" + i.toString();
-      //   var pared = gltf.scene.getObjectByName(p);
-      //   if (pared.type == "Mesh") {
-      //     objects.push(pared);
-      //   } else {
-      //     console.log(pared);
-      //     this.scene.add(pared);
-      //   }
-      // }
+
 
 
       for (let i = 0; i < objects.length; i++) {
-        objects[i].position.y=objects[i].position.y+posicionY;
+        objects[i].position.y = objects[i].position.y + posicionY;
         this.scene.add(objects[i]);
         var position = objects[i].position;
         var quaternion = objects[i].quaternion;

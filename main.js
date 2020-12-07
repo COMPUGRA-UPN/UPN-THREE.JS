@@ -223,8 +223,24 @@ function init() {
                 llamarmodalMapa();
                 document.exitPointerLock();
             }
-            if (INTERSECTED.name == "computadora1") {
+            if (INTERSECTED.name == "panel2") {
+                llamarmodalMapa();
+                document.exitPointerLock();
+            }
+            if (INTERSECTED.name == "caja") {
                 llamarmodalCaja();
+                document.exitPointerLock();
+            }
+            if (INTERSECTED.name == "computadora1") {
+                llamarmodalBiblioteca();
+                document.exitPointerLock();
+            }
+            if (INTERSECTED.name == "book1") {
+                llamarmodalEstructura();
+                document.exitPointerLock();
+            }
+            if (INTERSECTED.name == "book2") {
+                llamarmodalPoo();
                 document.exitPointerLock();
             }
             console.log("INTERSECTED: " + INTERSECTED.name);
@@ -267,7 +283,7 @@ function createGUI() {
 
     }
     // graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
-    graphicsFolder.add(settings, 'ball');
+    // graphicsFolder.add(settings, 'ball');
     graphicsFolder.add(settings, 'show debug render');
     // graphicsFolder.add(settings, 'show model').onChange(showModel);
 
@@ -397,7 +413,8 @@ function render() {
                 if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
 
                 INTERSECTED = intersects[0].object;
-                if (INTERSECTED.name == "panel1" || INTERSECTED.name == "panel2" || INTERSECTED.name == "computadora1") {
+                if (INTERSECTED.name == "panel1" || INTERSECTED.name == "panel2" || INTERSECTED.name == "computadora1"||INTERSECTED.name == "caja"
+                ||INTERSECTED.name == "book1"||INTERSECTED.name == "book2") {
                     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
                     INTERSECTED.material.emissive.setHex(0xff0000);
                 }
