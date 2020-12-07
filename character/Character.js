@@ -4,16 +4,8 @@ import { FPPControls } from '../controls/FPPControls.js';
 
 
 let controls;
-let controls2;
 let enableControls = true;
-let inMove = false;
 let mixers;
-var posCameraX;
-var posCameraY;
-var posCameraZ;
-var rotCameraX;
-var rotCameraY;
-var rotCameraZ;
 let animationLoaded = false;
 const clock = new THREE.Clock();
 const clock1 = new THREE.Clock();
@@ -42,10 +34,6 @@ var Character = function (scene, render, camera) {
             controls.movementSpeed = 50;
             controls.lookSpeed = 0.1;
             controls.lookVertical = false;
-            // controls2 = new FPPControls(this.camera, this.renderT.domElement, false);
-            // controls2.movementSpeed = 50;
-            // controls2.lookSpeed = 0.1;
-            // controls2.lookVertical = false;
 
             fbx.position.y = 0;
 
@@ -80,28 +68,10 @@ var Character = function (scene, render, camera) {
 
             this._RAF(path);
             const delta = clock.getDelta();
-            if(enableControls){
+            if (enableControls) {
                 if (mixers) mixers.update(delta);
             }
-
-
-            // this.renderT.render(this.scene, this.camera);
             if (animationLoaded) {
-                // console.log(this.fbx.rotation.y);
-                // console.log(this.camera.rotation.y);
-                if (enableControls) {
-                    // controls.update(clock1.getDelta());
-                    // controls2.update(clock2.getDelta());
-
-                    posCameraX = this.camera.position.x;
-                    posCameraY = this.camera.position.y;
-                    posCameraZ = this.camera.position.z;
-                    rotCameraX = this.camera.rotation.x;
-                    rotCameraY = this.camera.rotation.y;
-                    rotCameraZ = this.camera.rotation.z;
-                }
-                // this.camera.rotation.y = this.fbx.rotation.y;
-
             }
             if (!animationLoaded && this.fbx != null) {
                 this.loadAnimation(path);
@@ -110,32 +80,12 @@ var Character = function (scene, render, camera) {
 
         });
     }
-    this.moving = function (t) {
-        inMove=t;
-    }
-    this.enableControls = function (fppcamera) {
-        enableControls = fppcamera;
-    }
-    this.restoreCamera = function (camera) {
-        camera.position.x = posCameraX;
-        camera.position.y = posCameraY;
-        camera.position.z = posCameraZ;
-        camera.rotation.x = rotCameraX;
-        camera.rotation.y = rotCameraY;
-        camera.rotation.z = rotCameraZ;
-    }
-    this.TPPCamera = function (camera) {
-        controls2 = new FPPControls(camera, this.renderT.domElement, false);
-        controls2.movementSpeed = 100;
-        controls2.lookSpeed = 0.1;
-        controls2.lookVertical = false;
-    }
     this.animate = function (path) {
         window.requestIdleCallback(this._RAF(path));
     }
     this.handleResizeControls = function () {
         controls.handleResize();
-        controls2.handleResize();
+        // controls2.handleResize();
     }
 
 }
