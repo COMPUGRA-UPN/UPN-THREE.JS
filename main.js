@@ -31,6 +31,8 @@ let boxBody;
 let boxCBody;
 var sphereShape, sphereBody;
 let bMesh;
+let vMesh = false;
+
 
 var fullscreenchange;
 
@@ -245,7 +247,7 @@ function onDocumentMouseMove(event) {
 
 
 function showSkeleton() {
-    console.log("ASdasdasd");
+   
 }
 function createGUI() {
 
@@ -260,12 +262,14 @@ function createGUI() {
 
     const graphicsFolder = gui.addFolder("Graphics");
     var settings = {
-        'show model': true,
-        'show skeleton': showSkeleton,
+        'show debug render': showModel,
+        'ball': showSkeleton,
 
     }
     // graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
-    graphicsFolder.add(settings, 'show skeleton');
+    graphicsFolder.add(settings, 'ball');
+    graphicsFolder.add(settings, 'show debug render');
+    // graphicsFolder.add(settings, 'show model').onChange(showModel);
 
 
     const params = {
@@ -360,6 +364,9 @@ function animate2() {
 
 
 }
+function showModel() {
+    vMesh = true;
+}
 function render() {
     world.step(timeStamp);
     controls.update(Date.now() - time);
@@ -368,7 +375,9 @@ function render() {
     bMesh.position.copy(boxBody.position);
     bMesh.quaternion.copy(boxBody.quaternion);
 
-    debugRenderer.update();
+    if(vMesh){
+        debugRenderer.update();
+    }
     const deltaTime = clock.getDelta();
 
     //raycaster
@@ -388,7 +397,7 @@ function render() {
                 if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
 
                 INTERSECTED = intersects[0].object;
-                if (INTERSECTED.name == "panel1" || INTERSECTED.name == "panel2"|| INTERSECTED.name == "computadora1") {
+                if (INTERSECTED.name == "panel1" || INTERSECTED.name == "panel2" || INTERSECTED.name == "computadora1") {
                     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
                     INTERSECTED.material.emissive.setHex(0xff0000);
                 }
