@@ -10,7 +10,6 @@ import CargarModelos from './models/loaders.js';
 const mouse = new THREE.Vector2();
 //instances
 let SCENE = null;
-let CHARACTER = null;
 let UPN = null;
 let INTERSECTED;
 var controls,time = Date.now();
@@ -205,6 +204,7 @@ function init() {
     // boxCBody = new CANNON.Body({ shape: boxc, mass: 5 });
     // boxCBody.position.set(0,15, 0);
     // world.addBody(boxCBody);
+    
     var mass = 10, radius = 5;
     sphereShape = new CANNON.Sphere(radius);
     sphereBody = new CANNON.Body({ mass: mass });
@@ -230,16 +230,7 @@ function init() {
 
 
     document.addEventListener('mousemove', onDocumentMouseMove, false);
-
-    //character
-    CHARACTER = new Character(scene, renderer, camera);
-    CHARACTER.loadCharacter('./models/boy/character.fbx');
-    CHARACTER._RAF('./models/boy/walk.fbx');
-
-
-
-
-
+    document.addEventListener('click', onClick, false);
 }
 function onDocumentMouseMove(event) {
 
@@ -248,6 +239,13 @@ function onDocumentMouseMove(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
     // console.log(mouse);
+
+}
+function onClick(event) {
+
+    if(INTERSECTED!=null){
+        console.log("INTERSECTED: "+INTERSECTED.name);
+    }
 
 }
 function createGUI() {
@@ -336,7 +334,6 @@ function _OnWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    CHARACTER.handleResizeControls();
 }
 function animate() {
 
@@ -361,7 +358,6 @@ function animate2() {
 }
 function render() {
     world.step(timeStamp);
-    //controls.update();
     controls.update( Date.now() - time );
     time = Date.now();
     
@@ -370,9 +366,12 @@ function render() {
 
     debugRenderer.update();
     const deltaTime = clock.getDelta();
-    // CHARACTER.enableControls(scene.userData.fppCamera);
+
+    saveCamera();
+    // controls.enabled=scene.userData.fppCamera;
     // if (scene.userData.fppCamera) {
     //     if (orbitControls.enabled) {
+    //         loadCamera();
     //         CHARACTER.restoreCamera(camera);
     //     }
     //     orbitControls.enabled = false;
