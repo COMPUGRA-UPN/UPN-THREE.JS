@@ -252,7 +252,7 @@ function init() {
                 }
 
             } );
-            object.scale.setScalar(0.1);
+            object.scale.setScalar(0.08);
             object.position.set(200,21,500);
             scene.add( object );
 
