@@ -7,7 +7,7 @@ class CargarModelos {
     this.world = world;
     //CARGAR ESTRUCTURAS GLB (ubicacion,nombre de archivo)
 
-    this._LoadModelGlb('./models/upn/', 'upnx.glb', 20, 0);
+    this._LoadModelGlb('./models/upn/', 'upnx.glb', 50, 0);
     //this._LoadModelGlb('./models/upn/','Plaza.glb',-100,0);
 
     //Cargar Modelos Fbx Estaticos
@@ -81,7 +81,7 @@ class CargarModelos {
       objects.push(gltf.scene.getObjectByName("book1"));
       objects.push(gltf.scene.getObjectByName("book2"));
       objects.push(gltf.scene.getObjectByName("caja"));
-      for (let i = 1; i <= 12; i++) {
+      for (let i = 1; i <= 15; i++) {
         var escalon = "escalon" + i.toString();
         objects.push(gltf.scene.getObjectByName(escalon));
 
@@ -108,13 +108,15 @@ class CargarModelos {
       }
       for (let i = 1; i <= 24; i++) {
         var p = "p" + i.toString();
-        var pared = gltf.scene.getObjectByName(p);
-        pared.rotation.y = 9.425;
-        if (pared.type == "Mesh") {
-          objects.push(pared);
-        } else {
-          console.log(pared);
-          this.scene.add(pared);
+        if (p != "p14") {
+          var pared = gltf.scene.getObjectByName(p);
+          pared.rotation.y = 9.425;
+          if (pared.type == "Mesh") {
+            objects.push(pared);
+          } else {
+            console.log(pared);
+            this.scene.add(pared);
+          }
         }
       }
       for (let i = 1; i <= 10; i++) {
@@ -138,6 +140,16 @@ class CargarModelos {
           this.scene.add(pared);
         }
       }
+      for (let i = 1; i <= 8; i++) {
+        var p = "pisoa" + i.toString();
+        var pared = gltf.scene.getObjectByName(p);
+        if (pared.type == "Mesh") {
+          objects.push(pared);
+        } else {
+          console.log(pared);
+          this.scene.add(pared);
+        }
+      }
       for (let i = 1; i <= 9; i++) {
         var p = "paredb" + i.toString();
         var pared = gltf.scene.getObjectByName(p);
@@ -153,6 +165,7 @@ class CargarModelos {
       objects.push(gltf.scene.getObjectByName("pisob1"));
       objects.push(gltf.scene.getObjectByName("computadora1"));
       objects.push(gltf.scene.getObjectByName("cajita1"));
+      objects.push(gltf.scene.getObjectByName("cajita2"));
       objects.push(gltf.scene.getObjectByName("sofa1"));
 
 

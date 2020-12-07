@@ -163,46 +163,46 @@ function init() {
     const sphere = new THREE.SphereBufferGeometry(0.5, 16, 8);
 
     poste1 = new THREE.PointLight(0xd0d32d, 2, 50);
-    poste1.position.set(94, 49.5, 159.8);
+    poste1.position.set(94, 79.5, 159.8);
     //poste1.castShadow=true;
     poste1.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xe8dbdb })));
     scene.add(poste1);
 
     poste2 = new THREE.PointLight(0xd0d32d, 2, 50);
-    poste2.position.set(94, 49.5, 363.3);
+    poste2.position.set(94, 79.5, 363.3);
     //poste2.castShadow=true;
     poste2.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xe8dbdb })));
     scene.add(poste2);
 
     poste3 = new THREE.PointLight(0xd0d32d, 2, 50);
-    poste3.position.set(336, 49.5, 159.8);
+    poste3.position.set(336, 79.5, 159.8);
     //poste3.castShadow=true;
     poste3.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xe8dbdb })));
     scene.add(poste3);
 
     poste4 = new THREE.PointLight(0xd0d32d, 2, 50);
-    poste4.position.set(336, 49.5, 363.3);
+    poste4.position.set(336, 79.5, 363.3);
     //poste4.castShadow=true;
     poste4.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xe8dbdb })));
     scene.add(poste4);
 
     //LuzPabellonA
     lpabellonA = new THREE.PointLight(0xd0d32d, 2, 50);
-    lpabellonA.position.set(90, 39.5, 50);
+    lpabellonA.position.set(90, 69.5, 50);
     //lpabellonA.castShadow=true;
     lpabellonA.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xdef48a })));
     scene.add(lpabellonA);
 
     //LuzPabellonB
     lpabellonB = new THREE.PointLight(0xd0d32d, 2, 50);
-    lpabellonB.position.set(93.5, 37.5, 523);
+    lpabellonB.position.set(93.5, 67.5, 523);
     //lpabellonB.castShadow=true;
     lpabellonB.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xdef48a })));
     scene.add(lpabellonB);
 
     //Biblioteca
     lbiblioteca = new THREE.PointLight(0xd0d32d, 2, 50);
-    lbiblioteca.position.set(200, 39.5, 500);
+    lbiblioteca.position.set(200, 69.5, 500);
     //lbiblioteca.castShadow=true;
     lbiblioteca.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xdef48a })));
     scene.add(lbiblioteca);
@@ -239,7 +239,7 @@ function init() {
     let plane = new CANNON.Plane();
     let planebody = new CANNON.Body({ shape: plane, mass: 0 });
     planebody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
-    planebody.position.set(0, 20, 0);
+    planebody.position.set(0, 0, 0);
     world.addBody(planebody);
 
 
@@ -256,7 +256,7 @@ function init() {
     sphereShape = new CANNON.Sphere(radius);
     sphereBody = new CANNON.Body({ mass: mass });
     sphereBody.addShape(sphereShape);
-    sphereBody.position.set(0, 90, 0);
+    sphereBody.position.set(0, 120, 0);
     sphereBody.linearDamping = 0.9;
     world.addBody(sphereBody);
 
@@ -301,6 +301,11 @@ function init() {
             if (INTERSECTED.name == "book2") {
                 llamarmodalPoo();
                 document.exitPointerLock();
+                
+            }
+            if (INTERSECTED.name == "cajita2") {
+                llamarmodalBeca();
+                document.exitPointerLock();
             }
             console.log("INTERSECTED: " + INTERSECTED.name);
         }
@@ -329,7 +334,7 @@ function init() {
 
         });
         object.scale.setScalar(0.08);
-        object.position.set(200, 21, 500);
+        object.position.set(200, 51, 500);
         world.addBody(boxCBody);
         scene.add(object);
         boxCBody.position.copy(object.position);
@@ -352,7 +357,7 @@ function init() {
 
         });
         object.scale.setScalar(0.08);
-        object.position.set(105, 21, 480);
+        object.position.set(105, 51, 480);
         scene.add(object);
     });
 
@@ -532,7 +537,7 @@ function render() {
 
                 INTERSECTED = intersects[0].object;
                 if (INTERSECTED.name == "panel1" || INTERSECTED.name == "panel2" || INTERSECTED.name == "computadora1" || INTERSECTED.name == "caja"
-                    || INTERSECTED.name == "book1" || INTERSECTED.name == "book2") {
+                    || INTERSECTED.name == "book1" || INTERSECTED.name == "book2"|| INTERSECTED.name == "cajita2") {
                     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
                     INTERSECTED.material.emissive.setHex(0xff0000);
                 }
@@ -577,5 +582,9 @@ function llamarmodalPoo() {
 function llamarmodalMapa() {
 
     $('#modalMapa').modal('show'); // abrir
+}
+function llamarmodalBeca() {
+
+    $('#modalBeca').modal('show'); // abrir
 }
 
