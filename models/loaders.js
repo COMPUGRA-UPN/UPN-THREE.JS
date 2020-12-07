@@ -7,7 +7,7 @@ class CargarModelos {
     this.world = world;
     //CARGAR ESTRUCTURAS GLB (ubicacion,nombre de archivo)
 
-    this._LoadModelGlb('./models/upn/', 'upnx.glb', -1, 0);
+    this._LoadModelGlb('./models/upn/', 'upnx.glb', 20, 0);
     //this._LoadModelGlb('./models/upn/','Plaza.glb',-100,0);
 
     //Cargar Modelos Fbx Estaticos
@@ -74,41 +74,101 @@ class CargarModelos {
     loader.load(modelFile, (gltf) => {
       // var tree = gltf.scene.getObjectByName("Tree1");
       // this.scene.add(tree);
-      
-      for(let i=1;i<=12;i++){
-        var escalon="escalon"+i.toString();
+      objects.push(gltf.scene.getObjectByName("panel1"));
+      objects.push(gltf.scene.getObjectByName("panel2"));
+      objects.push(gltf.scene.getObjectByName("estante1"));
+      objects.push(gltf.scene.getObjectByName("estante2"));
+      for (let i = 1; i <= 12; i++) {
+        var escalon = "escalon" + i.toString();
         objects.push(gltf.scene.getObjectByName(escalon));
 
       }
-      for(let i=1;i<=6;i++){
-        var cubo="cubo"+i.toString();
+      for (let i = 1; i <= 6; i++) {
+        var cubo = "cubo" + i.toString();
         objects.push(gltf.scene.getObjectByName(cubo));
 
       }
-      for(let i=1;i<=4;i++){
-        var descanso="descansoaa"+i.toString();
+      for (let i = 1; i <= 4; i++) {
+        var descanso = "descansoaa" + i.toString();
         objects.push(gltf.scene.getObjectByName(descanso));
 
       }
-      for(let i=1;i<=4;i++){
-        var a="a"+i.toString();
+      for (let i = 1; i <= 5; i++) {
+        var a = "a" + i.toString();
         objects.push(gltf.scene.getObjectByName(a));
 
       }
-      for(let i=1;i<=13;i++){
-        var piedra="piedra"+i.toString();
+      for (let i = 1; i <= 13; i++) {
+        var piedra = "piedra" + i.toString();
         objects.push(gltf.scene.getObjectByName(piedra));
 
       }
-      console.log(objects[0]);
-      // console.log(objects[1]);
-      // var panel2 = gltf.scene.getObjectByName("Plano.070");
-      // const parent = Muffler.parent;
-      // parent.remove(Muffler);
+      for (let i = 1; i <= 24; i++) {
+        var p = "p" + i.toString();
+        var pared = gltf.scene.getObjectByName(p);
+        pared.rotation.y = 9.425;
+        if (pared.type == "Mesh") {
+          objects.push(pared);
+        } else {
+          console.log(pared);
+          this.scene.add(pared);
+        }
+      }
+      for (let i = 1; i <= 10; i++) {
+        var p = "g" + i.toString();
+        var pared = gltf.scene.getObjectByName(p);
+        if (pared.type == "Mesh") {
+          objects.push(pared);
+        } else {
+          console.log(pared);
+          this.scene.add(pared);
+        }
+      }
+      objects.push(gltf.scene.getObjectByName("plaza"));
+      for (let i = 1; i <= 6; i++) {
+        var p = "piso" + i.toString();
+        var pared = gltf.scene.getObjectByName(p);
+        if (pared.type == "Mesh") {
+          objects.push(pared);
+        } else {
+          console.log(pared);
+          this.scene.add(pared);
+        }
+      }
+      objects.push(gltf.scene.getObjectByName("pisob1"));
+      objects.push(gltf.scene.getObjectByName("computadora1"));
+      objects.push(gltf.scene.getObjectByName("cajita1"));
+      objects.push(gltf.scene.getObjectByName("sofa1"));
+      for (let i = 1; i <= 5; i++) {
+        var p = "mesa" + i.toString();
+        var pared = gltf.scene.getObjectByName(p);
+        if (pared.type == "Mesh") {
+          objects.push(pared);
+        } else {
+          console.log(pared);
+          this.scene.add(pared);
+        }
+      }
+      // for (let i = 1; i <= 5; i++) {
+      //   var p = "libro" + i.toString();
+      //   var pared = gltf.scene.getObjectByName(p);
+      //   if (pared.type == "Mesh") {
+      //     objects.push(pared);
+      //   } else {
+      //     console.log(pared);
+      //     this.scene.add(pared);
+      //   }
+      // }
+
+
       for (let i = 0; i < objects.length; i++) {
+        objects[i].position.y=objects[i].position.y+posicionY;
         this.scene.add(objects[i]);
+        var position = objects[i].position;
+        var quaternion = objects[i].quaternion;
         // this.scene.add(panel2);
 
+        // if(objects[i].type=="Mesh")
         let geometry = new THREE.Geometry().fromBufferGeometry(objects[i].geometry)
         let scale = objects[i].scale;
         let vertices = [], faces = [];
@@ -131,7 +191,7 @@ class CargarModelos {
           faces.push([a, b, c]);
         }
 
-        console.log(vertices, faces);
+        // console.log(vertices, faces);
 
         let shape = new CANNON.ConvexPolyhedron(vertices, faces);
 
@@ -139,9 +199,11 @@ class CargarModelos {
           mass: 0,
           shape: shape
         });
-        rigidBody.position.copy(objects[i].position);
-        rigidBody.quaternion.copy(objects[i].quaternion);
+
+        rigidBody.position.copy(position);
+        rigidBody.quaternion.copy(quaternion);
         this.world.addBody(rigidBody);
+        // console.log(objects[i]);
       }
 
       // console.log(geometry);
@@ -151,6 +213,8 @@ class CargarModelos {
       gltf.scene.translateY(posicionY);
       gltf.scene.rotateY(rotacionY);
       this.scene.add(gltf.scene);
+
+      console.clear();
     });
   }
 }

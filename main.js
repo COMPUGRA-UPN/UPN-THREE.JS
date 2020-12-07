@@ -32,7 +32,7 @@ let boxCBody;
 var sphereShape, sphereBody;
 let bMesh;
 
-
+var fullscreenchange;
 
 init();
 window.requestIdleCallback(animate);
@@ -104,7 +104,7 @@ function init() {
 
             if (/Firefox/i.test(navigator.userAgent)) {
 
-                var fullscreenchange = function (event) {
+                fullscreenchange = function (event) {
 
                     if (document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element) {
 
@@ -195,12 +195,12 @@ function init() {
     sphereShape = new CANNON.Sphere(radius);
     sphereBody = new CANNON.Body({ mass: mass });
     sphereBody.addShape(sphereShape);
-    sphereBody.position.set(0, 5, 0);
+    sphereBody.position.set(0, 40, 0);
     sphereBody.linearDamping = 0.9;
     world.addBody(sphereBody);
 
     controls = new PointerLockControls(camera, sphereBody);
-    controls.velocityFactor=10;
+    controls.velocityFactor = 10;
     scene.add(controls.getObject());
     controls.enabled = true;
 
@@ -214,7 +214,21 @@ function init() {
     debugRenderer = new THREE.CannonDebugRenderer(scene, world);
 
 
+    function onClick(event) {
+        // llamarmodalMapa();
+        if (INTERSECTED != null) {
+            if (INTERSECTED.name == "panel1") {
+                llamarmodalMapa();
+                document.exitPointerLock();
+            }
+            if (INTERSECTED.name == "computadora1") {
+                llamarmodalCaja();
+                document.exitPointerLock();
+            }
+            console.log("INTERSECTED: " + INTERSECTED.name);
+        }
 
+    }
 
     document.addEventListener('mousemove', onDocumentMouseMove, false);
     document.addEventListener('click', onClick, false);
@@ -228,14 +242,9 @@ function onDocumentMouseMove(event) {
     // console.log(mouse);
 
 }
-function onClick(event) {
 
-    if (INTERSECTED != null) {
-        console.log("INTERSECTED: " + INTERSECTED.name);
-    }
 
-}
-function showSkeleton(){
+function showSkeleton() {
     console.log("ASdasdasd");
 }
 function createGUI() {
@@ -253,10 +262,10 @@ function createGUI() {
     var settings = {
         'show model': true,
         'show skeleton': showSkeleton,
-       
+
     }
     // graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
-    graphicsFolder.add( settings, 'show skeleton' );
+    graphicsFolder.add(settings, 'show skeleton');
 
 
     const params = {
@@ -379,11 +388,17 @@ function render() {
                 if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
 
                 INTERSECTED = intersects[0].object;
-                if (true) {
+                if (INTERSECTED.name == "panel1" || INTERSECTED.name == "panel2"|| INTERSECTED.name == "computadora1") {
                     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
                     INTERSECTED.material.emissive.setHex(0xff0000);
                 }
-                console.log(INTERSECTED);
+                // console.log("Intersedted");
+                // console.log(intersects[0].object);
+            } else {
+                // console.log("No intersedted");
+                // console.log(intersects[0].object);
+                // // const color2 = new THREE.Color( 0xff0000 );
+                // intersects[0].object.material.color=new THREE.Color( 0x200ff );
             }
         }
 
@@ -398,5 +413,25 @@ function render() {
     renderer.render(scene, camera);
 
 
+}
+function llamarmodalCaja() {
+
+    $('#modalCaja').modal('show'); // abrir
+}
+function llamarmodalBiblioteca() {
+
+    $('#modalBiblioteca').modal('show'); // abrir
+}
+function llamarmodalEstructura() {
+
+    $('#modalEstructura').modal('show'); // abrir
+}
+function llamarmodalPoo() {
+
+    $('#modalPoo').modal('show'); // abrir
+}
+function llamarmodalMapa() {
+
+    $('#modalMapa').modal('show'); // abrir
 }
 
