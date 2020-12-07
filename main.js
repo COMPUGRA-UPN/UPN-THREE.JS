@@ -3,6 +3,7 @@ import LoadScene from "./scene/evironment.js";
 import FPPCamera from "./camera/FPPCamera.js";
 import TPPCamera from "./camera/TPPCamera.js";
 import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
+import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader.js';
 import { Character } from "./character/Character.js";
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import CargarModelos from './models/loaders.js';
@@ -33,6 +34,10 @@ var sphereShape, sphereBody;
 let bMesh;
 let vMesh = false;
 
+//characters
+let mixers;
+let poste1, poste2, poste3, poste4;
+let lpabellonA, lpabellonB, lbiblioteca;
 
 var fullscreenchange;
 
@@ -156,11 +161,68 @@ function init() {
     spotLight.shadow.focus = 1;
     scene.add(spotLight);
 
-    ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7);
+    const sphere = new THREE.SphereBufferGeometry(0.5, 16, 8);
+
+    poste1 = new THREE.PointLight(0xd0d32d, 2, 50);
+    poste1.position.set(94, 49.5, 159.8);
+    //poste1.castShadow=true;
+    poste1.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xe8dbdb })));
+    scene.add(poste1);
+
+    poste2 = new THREE.PointLight(0xd0d32d, 2, 50);
+    poste2.position.set(94, 49.5, 363.3);
+    //poste2.castShadow=true;
+    poste2.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xe8dbdb })));
+    scene.add(poste2);
+
+    poste3 = new THREE.PointLight(0xd0d32d, 2, 50);
+    poste3.position.set(336, 49.5, 159.8);
+    //poste3.castShadow=true;
+    poste3.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xe8dbdb })));
+    scene.add(poste3);
+
+    poste4 = new THREE.PointLight(0xd0d32d, 2, 50);
+    poste4.position.set(336, 49.5, 363.3);
+    //poste4.castShadow=true;
+    poste4.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xe8dbdb })));
+    scene.add(poste4);
+
+    //LuzPabellonA
+    lpabellonA = new THREE.PointLight(0xd0d32d, 2, 50);
+    lpabellonA.position.set(90, 39.5, 50);
+    //lpabellonA.castShadow=true;
+    lpabellonA.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xdef48a })));
+    scene.add(lpabellonA);
+
+    //LuzPabellonB
+    lpabellonB = new THREE.PointLight(0xd0d32d, 2, 50);
+    lpabellonB.position.set(93.5, 37.5, 523);
+    //lpabellonB.castShadow=true;
+    lpabellonB.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xdef48a })));
+    scene.add(lpabellonB);
+
+    //Biblioteca
+    lbiblioteca = new THREE.PointLight(0xd0d32d, 2, 50);
+    lbiblioteca.position.set(200, 39.5, 500);
+    //lbiblioteca.castShadow=true;
+    lbiblioteca.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xdef48a })));
+    scene.add(lbiblioteca);
+
+    //LuzAmbiente
+    ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.05);
     scene.add(ambientLight);
+
+
 
     //gui
     scene.userData.fppCamera = true;
+    scene.userData.poste1 = true;
+    scene.userData.poste2 = true;
+    scene.userData.poste3 = true;
+    scene.userData.poste4 = true;
+    scene.userData.lpabellonA = true;
+    scene.userData.lpabellonB = true;
+    scene.userData.lbiblioteca = true;
     //scene.userData.ambientLight = new THREE.Color(0x00FFFF);
     // console.log(scene.userData.ambientLight);
     createGUI();
@@ -247,6 +309,31 @@ function init() {
         }
 
     }
+    //characters
+    const loader = new FBXLoader();
+    loader.load('models/secretaria/Texting.fbx', function (object) {
+
+        mixers = new THREE.AnimationMixer(object);
+
+        const action = mixers.clipAction(object.animations[0]);
+        action.play();
+
+        object.traverse(function (child) {
+
+            if (child.isMesh) {
+
+                child.castShadow = true;
+                child.receiveShadow = true;
+
+            }
+
+        });
+        object.scale.setScalar(0.08);
+        object.position.set(200, 21, 500);
+        scene.add(object);
+
+    });
+
 
     document.addEventListener('mousemove', onDocumentMouseMove, false);
     document.addEventListener('click', onClick, false);
@@ -263,7 +350,7 @@ function onDocumentMouseMove(event) {
 
 
 function showSkeleton() {
-   
+
 }
 function createGUI() {
 
@@ -331,13 +418,6 @@ function createGUI() {
         spotLight.position.z = val;
     });
 
-
-    /* const params2 = {
-         'light color': ambientLight.color.getHex(),
-     };
-     graphicsFolder.addColor(params2, 'light color').name('Luz de Ambiente').onChange(function (val) {
-         ambientLight.color.setHex(val);
-     });*/
     const params2 = {
         'light color': ambientLight.color.getHex(),
         intensity: ambientLight.intensity
@@ -348,6 +428,22 @@ function createGUI() {
     graphicsFolder.add(params2, 'intensity', 0, 1.5).name(' Intensidad Luz Ambiental').onChange(function (val) {
         ambientLight.intensity = val;
 
+    });
+    graphicsFolder.add(scene.userData, "poste1", "poste2", "poste3", "poste4").name("Postes").onChange(function (val) {
+        poste1.intensity = val;
+        poste2.intensity = val;
+        poste3.intensity = val;
+        poste4.intensity = val;
+        val = 2;
+    });
+    graphicsFolder.add(scene.userData, "lpabellonA", "lpabellonB").name("Pabellones").onChange(function (val) {
+        lpabellonA.intensity = val;
+        lpabellonB.intensity = val;
+        val = 2;
+    });
+    graphicsFolder.add(scene.userData, "lbiblioteca").name("Biblioteca").onChange(function (val) {
+        lbiblioteca.intensity = val;
+        val = 2;
     });
 
     graphicsFolder.open();
@@ -363,9 +459,9 @@ function animate() {
 
     requestAnimationFrame(animate);
 
-    // const delta = clock.getDelta();
+    const delta = clock.getDelta();
 
-    // if (mixers) mixers.update(delta);
+    if (mixers) mixers.update(delta);
 
     // renderer.render(scene, camera);
     // controls.update(clock1.getDelta());
@@ -391,11 +487,9 @@ function render() {
     bMesh.position.copy(boxBody.position);
     bMesh.quaternion.copy(boxBody.quaternion);
 
-    if(vMesh){
+    if (vMesh) {
         debugRenderer.update();
     }
-    const deltaTime = clock.getDelta();
-
     //raycaster
     raycaster.setFromCamera(mouse, camera);
 
@@ -413,8 +507,8 @@ function render() {
                 if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
 
                 INTERSECTED = intersects[0].object;
-                if (INTERSECTED.name == "panel1" || INTERSECTED.name == "panel2" || INTERSECTED.name == "computadora1"||INTERSECTED.name == "caja"
-                ||INTERSECTED.name == "book1"||INTERSECTED.name == "book2") {
+                if (INTERSECTED.name == "panel1" || INTERSECTED.name == "panel2" || INTERSECTED.name == "computadora1" || INTERSECTED.name == "caja"
+                    || INTERSECTED.name == "book1" || INTERSECTED.name == "book2") {
                     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
                     INTERSECTED.material.emissive.setHex(0xff0000);
                 }
