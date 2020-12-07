@@ -18,7 +18,8 @@ var controls, time = Date.now();
 // lights
 let spotLight;
 let ambientLight;
-
+let poste1, poste2, poste3, poste4;
+let lpabellonA, lpabellonB, lbiblioteca;
 // Graphics variables
 let container, stats;
 let camera, scene, raycaster, renderer, gui;
@@ -159,11 +160,70 @@ function init() {
 
     ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7);
     scene.add(ambientLight);
+    //Focos
+    const sphere = new THREE.SphereBufferGeometry( 0.5, 16, 8 );
+    
+    poste1 = new THREE.PointLight( 0xd0d32d, 2, 50 );
+    poste1.position.set(94, 49.5, 159.8);
+    //poste1.castShadow=true;
+    poste1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xe8dbdb } ) ) );
+    scene.add( poste1 );
+    
+    poste2 = new THREE.PointLight( 0xd0d32d, 2, 50 );
+    poste2.position.set(94, 49.5, 363.3);
+    //poste2.castShadow=true;
+    poste2.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xe8dbdb } ) ) );
+    scene.add( poste2 );
+    
+    poste3 = new THREE.PointLight( 0xd0d32d, 2, 50 );
+    poste3.position.set(336, 49.5, 159.8);
+    //poste3.castShadow=true;
+    poste3.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xe8dbdb } ) ) );
+    scene.add( poste3 );
+    
+    poste4 = new THREE.PointLight( 0xd0d32d, 2, 50 );
+    poste4.position.set(336, 49.5, 363.3);
+    //poste4.castShadow=true;
+    poste4.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xe8dbdb } ) ) );
+	scene.add( poste4 );
+
+    //LuzPabellonA
+    lpabellonA = new THREE.PointLight( 0xd0d32d, 2, 50 );
+    lpabellonA.position.set(90, 39.5, 50);
+    //lpabellonA.castShadow=true;
+    lpabellonA.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xdef48a } ) ) );
+    scene.add( lpabellonA );
+    
+    //LuzPabellonB
+    lpabellonB = new THREE.PointLight( 0xd0d32d, 2, 50 );
+    lpabellonB.position.set(93.5, 37.5, 523);
+    //lpabellonB.castShadow=true;
+    lpabellonB.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xdef48a } ) ) );
+    scene.add( lpabellonB );
+
+    //Biblioteca
+    lbiblioteca = new THREE.PointLight( 0xd0d32d, 2, 50 );
+    lbiblioteca.position.set(200, 39.5, 500);
+    //lbiblioteca.castShadow=true;
+    lbiblioteca.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xdef48a } ) ) );
+    scene.add( lbiblioteca );
+
+    //LuzAmbiente
+    ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.2);
+    scene.add(ambientLight);
 
     //gui
     scene.userData.fppCamera = true;
-    //scene.userData.ambientLight = new THREE.Color(0x00FFFF);
-    // console.log(scene.userData.ambientLight);
+    scene.userData.poste1 = true;
+    scene.userData.poste2 = true;
+    scene.userData.poste3 = true;
+    scene.userData.poste4 = true;
+    scene.userData.lpabellonA = true;
+    scene.userData.lpabellonB = true;
+    scene.userData.lbiblioteca = true;
+
+
+
     createGUI();
 
     world = new CANNON.World();
@@ -338,7 +398,23 @@ function createGUI() {
     graphicsFolder.add(params, 'PosZ', -200, 600).onChange(function (val) {
         spotLight.position.z = val;
     });
-
+  //gui
+    graphicsFolder.add(scene.userData, "poste1","poste2","poste3","poste4").name("Postes").onChange(function(val){
+        poste1.intensity=val;
+        poste2.intensity=val;
+        poste3.intensity=val;
+        poste4.intensity=val;
+        val=2;
+    });
+    graphicsFolder.add(scene.userData, "lpabellonA","lpabellonB").name("Pabellones").onChange(function(val){
+        lpabellonA.intensity=val;
+        lpabellonB.intensity=val;
+        val=2;
+    });
+    graphicsFolder.add(scene.userData, "lbiblioteca").name("Biblioteca").onChange(function(val){
+        lbiblioteca.intensity=val;
+        val=2;
+    });
 
     /* const params2 = {
          'light color': ambientLight.color.getHex(),
