@@ -230,7 +230,7 @@ function init() {
     createGUI();
 
     world = new CANNON.World();
-    world.gravity.set(0, -10, 0);
+    world.gravity.set(0, -50, 0);
     world.broadphase = new CANNON.NaiveBroadphase();
 
 
@@ -248,7 +248,7 @@ function init() {
 
     let box = new CANNON.Box(new CANNON.Vec3(3, 3, 3));
     boxBody = new CANNON.Body({ shape: box, mass: 2 });
-    boxBody.position.set(15, 50, 5);
+    boxBody.position.set(15, 250, 5);
     world.addBody(boxBody);
 
 
@@ -258,7 +258,7 @@ function init() {
     sphereShape = new CANNON.Sphere(radius);
     sphereBody = new CANNON.Body({ mass: mass });
     sphereBody.addShape(sphereShape);
-    sphereBody.position.set(0, 40, 0);
+    sphereBody.position.set(0, 90, 0);
     sphereBody.linearDamping = 0.9;
     world.addBody(sphereBody);
 
