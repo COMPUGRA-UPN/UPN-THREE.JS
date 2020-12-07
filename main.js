@@ -39,6 +39,7 @@ let poste1, poste2, poste3, poste4;
 let lpabellonA, lpabellonB, lbiblioteca;
 
 var fullscreenchange;
+var balls = [], ballsShape = [];
 
 init();
 window.requestIdleCallback(animate);
@@ -246,7 +247,7 @@ function init() {
 
     let box = new CANNON.Box(new CANNON.Vec3(3, 3, 3));
     boxBody = new CANNON.Body({ shape: box, mass: 2 });
-    boxBody.position.set(15, 250, 5);
+    boxBody.position.set(15, 350, 5);
     world.addBody(boxBody);
 
 
@@ -256,7 +257,7 @@ function init() {
     sphereShape = new CANNON.Sphere(radius);
     sphereBody = new CANNON.Body({ mass: mass });
     sphereBody.addShape(sphereShape);
-    sphereBody.position.set(0, 120, 0);
+    sphereBody.position.set(0, 200, 0);
     sphereBody.linearDamping = 0.9;
     world.addBody(sphereBody);
 
@@ -301,7 +302,7 @@ function init() {
             if (INTERSECTED.name == "book2") {
                 llamarmodalPoo();
                 document.exitPointerLock();
-                
+
             }
             if (INTERSECTED.name == "cajita2") {
                 llamarmodalBeca();
@@ -314,10 +315,10 @@ function init() {
     //characters
     const loader = new FBXLoader();
     loader.load('models/secretaria/Texting.fbx', function (object) {
-        let boxc = new CANNON.Box(new CANNON.Vec3(1,13, 1));
+        let boxc = new CANNON.Box(new CANNON.Vec3(1, 13, 1));
         let boxCBody = new CANNON.Body({ shape: boxc, mass: 0 });
-       
-        
+
+
         mixers = new THREE.AnimationMixer(object);
 
         const action = mixers.clipAction(object.animations[0]);
@@ -377,7 +378,25 @@ function onDocumentMouseMove(event) {
 
 
 function showSkeleton() {
+    console.log("ball");
+    let mass = 1, radius = 2;
+    let sphereShape = new CANNON.Sphere(radius);
+    let ballBody = new CANNON.Body({ mass: mass });
+    ballBody.addShape(sphereShape);
+    ballBody.position.copy(sphereBody.position);
+    ballBody.position.y=ballBody.position.y+10;
+    ballBody.position.x=ballBody.position.x+10;
+    ballBody.linearDamping = 0.9;
+    world.addBody(ballBody);
+    ballsShape.push(ballBody);
+    
 
+    let bGeo = new THREE.SphereGeometry(2, 32, 32);
+    let bMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+    bMesh = new THREE.Mesh(bGeo, bMat);
+    scene.add(bMesh);
+    balls.push(bMesh);
+    bMesh.position.copy(ballBody.position);
 }
 function createGUI() {
 
@@ -397,7 +416,7 @@ function createGUI() {
 
     }
     // graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
-    // graphicsFolder.add(settings, 'ball');
+    graphicsFolder.add(settings, 'ball');
     graphicsFolder.add(settings, 'show debug render');
     // graphicsFolder.add(settings, 'show model').onChange(showModel);
 
@@ -515,6 +534,10 @@ function render() {
 
     bMesh.position.copy(boxBody.position);
     bMesh.quaternion.copy(boxBody.quaternion);
+    for (let i = 0; i < balls.length; i++) {
+        balls[i].position.copy(ballsShape[i].position);
+        balls[i].quaternion.copy(ballsShape[i].quaternion);
+    }
 
     if (vMesh) {
         debugRenderer.update();
@@ -537,7 +560,7 @@ function render() {
 
                 INTERSECTED = intersects[0].object;
                 if (INTERSECTED.name == "panel1" || INTERSECTED.name == "panel2" || INTERSECTED.name == "computadora1" || INTERSECTED.name == "caja"
-                    || INTERSECTED.name == "book1" || INTERSECTED.name == "book2"|| INTERSECTED.name == "cajita2") {
+                    || INTERSECTED.name == "book1" || INTERSECTED.name == "book2" || INTERSECTED.name == "cajita2") {
                     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
                     INTERSECTED.material.emissive.setHex(0xff0000);
                 }
