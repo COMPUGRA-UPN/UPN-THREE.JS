@@ -42,12 +42,12 @@ var Character = function (scene, render, camera) {
             controls.movementSpeed = 50;
             controls.lookSpeed = 0.1;
             controls.lookVertical = false;
-            controls2 = new FPPControls(this.camera, this.renderT.domElement, false);
-            controls2.movementSpeed = 50;
-            controls2.lookSpeed = 0.1;
-            controls2.lookVertical = false;
+            // controls2 = new FPPControls(this.camera, this.renderT.domElement, false);
+            // controls2.movementSpeed = 50;
+            // controls2.lookSpeed = 0.1;
+            // controls2.lookVertical = false;
 
-            fbx.position.y = 1;
+            fbx.position.y = 0;
 
             fbx.receiveShadow = true;
             fbx.castShadow = true;
@@ -90,8 +90,8 @@ var Character = function (scene, render, camera) {
                 // console.log(this.fbx.rotation.y);
                 // console.log(this.camera.rotation.y);
                 if (enableControls) {
-                    controls.update(clock1.getDelta());
-                    controls2.update(clock2.getDelta());
+                    // controls.update(clock1.getDelta());
+                    // controls2.update(clock2.getDelta());
 
                     posCameraX = this.camera.position.x;
                     posCameraY = this.camera.position.y;

@@ -7,13 +7,13 @@ import { Character } from "./character/Character.js";
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import CargarModelos from './models/loaders.js';
 
-
 const mouse = new THREE.Vector2();
 //instances
 let SCENE = null;
 let CHARACTER = null;
 let UPN = null;
 let INTERSECTED;
+var controls,time = Date.now();
 
 // lights
 let spotLight;
@@ -36,6 +36,8 @@ let world;
 let debugRenderer;
 let timeStamp = 1.0 / 60.0;
 let boxBody;
+let boxCBody;
+var sphereShape, sphereBody;
 let bMesh;
 
 
@@ -57,10 +59,91 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
-
-
     window.addEventListener('resize', _OnWindowResize, false);
+    var blocker = document.getElementById( 'blocker' );
+    var instructions = document.getElementById( 'instructions' );
 
+    var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+
+    if ( havePointerLock ) {
+
+        var element = document.body;
+
+        var pointerlockchange = function ( event ) {
+
+            if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+
+                controls.enabled = true;
+
+                blocker.style.display = 'none';
+
+            } else {
+
+                controls.enabled = false;
+
+                blocker.style.display = '-webkit-box';
+                blocker.style.display = '-moz-box';
+                blocker.style.display = 'box';
+
+                instructions.style.display = '';
+
+            }
+
+        }
+
+        var pointerlockerror = function ( event ) {
+            instructions.style.display = '';
+        }
+
+        // Hook pointer lock state change events
+        document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+        document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+        document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+
+        document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+        document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+        document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+
+        instructions.addEventListener( 'click', function ( event ) {
+            instructions.style.display = 'none';
+
+            // Ask the browser to lock the pointer
+            element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+
+            if ( /Firefox/i.test( navigator.userAgent ) ) {
+
+                var fullscreenchange = function ( event ) {
+
+                    if ( document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element ) {
+
+                        document.removeEventListener( 'fullscreenchange', fullscreenchange );
+                        document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+
+                        element.requestPointerLock();
+                    }
+
+                }
+
+                document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+                document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+
+                element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+
+                element.requestFullscreen();
+
+            } else {
+
+                element.requestPointerLock();
+
+            }
+
+        }, false );
+
+    } else {
+
+        instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+
+    }
 
     camera = new FPPCamera(renderer);
 
@@ -88,21 +171,21 @@ function init() {
     spotLight.shadow.focus = 1;
     scene.add(spotLight);
 
-    ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
+    ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7);
     scene.add(ambientLight);
 
     //gui
     scene.userData.fppCamera = true;
-    scene.userData.ambientLight = new THREE.Color(0x00FFFF);
+    //scene.userData.ambientLight = new THREE.Color(0x00FFFF);
     // console.log(scene.userData.ambientLight);
     createGUI();
 
 
-    SCENE = new LoadScene(scene, scene.userData.ambientLight);
+    SCENE = new LoadScene(scene, scene.userData.ambientLight,world);
     UPN = new CargarModelos(scene);
 
     world = new CANNON.World();
-    world.gravity.set(0, -0.1, 0);
+    world.gravity.set(0, -9.8, 0);
     world.broadphase = new CANNON.NaiveBroadphase();
 
     let plane = new CANNON.Plane();
@@ -110,12 +193,32 @@ function init() {
     planebody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
     world.addBody(planebody);
 
-    let box = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
-    boxBody = new CANNON.Body({ shape: box, mass: 5 });
-    boxBody.position.set(0, 5, 0);
+
+
+    let box = new CANNON.Box(new CANNON.Vec3(3, 3, 3));
+    boxBody = new CANNON.Body({ shape: box, mass: 2 });
+    boxBody.position.set(5, 5, 5);
     world.addBody(boxBody);
 
-    let bGeo = new THREE.BoxGeometry(1, 1, 1);
+    
+    // let boxc = new CANNON.Box(new CANNON.Vec3(1, 4, 1));
+    // boxCBody = new CANNON.Body({ shape: boxc, mass: 5 });
+    // boxCBody.position.set(0,15, 0);
+    // world.addBody(boxCBody);
+    var mass = 10, radius = 5;
+    sphereShape = new CANNON.Sphere(radius);
+    sphereBody = new CANNON.Body({ mass: mass });
+    sphereBody.addShape(sphereShape);
+    sphereBody.position.set(0,5,0);
+    sphereBody.linearDamping = 0.9;
+    world.addBody(sphereBody);
+
+    controls = new PointerLockControls( camera , sphereBody );
+    scene.add( controls.getObject() );
+    controls.enabled=true;
+
+
+    let bGeo = new THREE.BoxGeometry(5, 5, 5);
     let bMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
     bMesh = new THREE.Mesh(bGeo, bMat);
     scene.add(bMesh);
@@ -258,19 +361,25 @@ function animate2() {
 }
 function render() {
     world.step(timeStamp);
+    //controls.update();
+    controls.update( Date.now() - time );
+    time = Date.now();
+    
     bMesh.position.copy(boxBody.position);
+    bMesh.quaternion.copy(boxBody.quaternion);
+
     debugRenderer.update();
     const deltaTime = clock.getDelta();
-    CHARACTER.enableControls(scene.userData.fppCamera);
-    if (scene.userData.fppCamera) {
-        if (orbitControls.enabled) {
-            CHARACTER.restoreCamera(camera);
-        }
-        orbitControls.enabled = false;
-    } else {
-        orbitControls.enabled = true;
-        orbitControls.update();
-    }
+    // CHARACTER.enableControls(scene.userData.fppCamera);
+    // if (scene.userData.fppCamera) {
+    //     if (orbitControls.enabled) {
+    //         CHARACTER.restoreCamera(camera);
+    //     }
+    //     orbitControls.enabled = false;
+    // } else {
+    //     orbitControls.enabled = true;
+    //     orbitControls.update();
+    // }
     // SCENE.updateLight();
 
     //raycaster
@@ -282,10 +391,10 @@ function render() {
 
         const targetDistance = intersects[0].distance;
 
-        // camera.focusAt(targetDistance); // using Cinematic camera focusAt method
+        //camera.focusAt(targetDistance); // using Cinematic camera focusAt method
 
         if (INTERSECTED != intersects[0].object) {
-            if (INTERSECTED != null) {
+            if (intersects[0].object.material.emissive != null) {
 
                 if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
 
