@@ -1,5 +1,4 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
-import { FPPControls } from '../controls/FPPControls.js';
 let posCamera;
 let rotCamera;
 

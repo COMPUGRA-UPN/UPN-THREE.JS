@@ -1,11 +1,8 @@
 
 import LoadScene from "./scene/evironment.js";
 import FPPCamera from "./camera/FPPCamera.js";
-import TPPCamera from "./camera/TPPCamera.js";
 import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
 import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader.js';
-import { Character } from "./character/Character.js";
-import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import CargarModelos from './models/loaders.js';
 
 const mouse = new THREE.Vector2();
@@ -242,6 +239,7 @@ function init() {
     let plane = new CANNON.Plane();
     let planebody = new CANNON.Body({ shape: plane, mass: 0 });
     planebody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+    planebody.position.set(0, 20, 0);
     world.addBody(planebody);
 
 
