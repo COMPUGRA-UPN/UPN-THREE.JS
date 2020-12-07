@@ -21,13 +21,6 @@ let ambientLight;
 // Graphics variables
 let container, stats;
 let camera, scene, raycaster, renderer, gui;
-let orbitControls
-var posCameraX;
-var posCameraY;
-var posCameraZ;
-var rotCameraX;
-var rotCameraY;
-var rotCameraZ;
 
 const clock = new THREE.Clock();
 
@@ -145,15 +138,6 @@ function init() {
     }
 
     camera = new FPPCamera(renderer);
-
-    saveCamera();
-    orbitControls = new OrbitControls(camera, renderer.domElement);
-    orbitControls.enabled = false;
-    loadCamera();
-
-
-
-
     scene = new THREE.Scene();
     //Luces
     spotLight = new THREE.SpotLight(0xffffff, 1);
@@ -180,7 +164,7 @@ function init() {
     createGUI();
 
     world = new CANNON.World();
-    world.gravity.set(0, -12, 0);
+    world.gravity.set(0, -10, 0);
     world.broadphase = new CANNON.NaiveBroadphase();
 
 
@@ -207,7 +191,7 @@ function init() {
     // boxCBody.position.set(0,15, 0);
     // world.addBody(boxCBody);
 
-    var mass = 10, radius = 5;
+    var mass = 200, radius = 4;
     sphereShape = new CANNON.Sphere(radius);
     sphereBody = new CANNON.Body({ mass: mass });
     sphereBody.addShape(sphereShape);
@@ -216,6 +200,7 @@ function init() {
     world.addBody(sphereBody);
 
     controls = new PointerLockControls(camera, sphereBody);
+    controls.velocityFactor=10;
     scene.add(controls.getObject());
     controls.enabled = true;
 
@@ -250,6 +235,9 @@ function onClick(event) {
     }
 
 }
+function showSkeleton(){
+    console.log("ASdasdasd");
+}
 function createGUI() {
 
     if (gui) {
@@ -262,8 +250,13 @@ function createGUI() {
 
 
     const graphicsFolder = gui.addFolder("Graphics");
-
-    graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
+    var settings = {
+        'show model': true,
+        'show skeleton': showSkeleton,
+       
+    }
+    // graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
+    graphicsFolder.add( settings, 'show skeleton' );
 
 
     const params = {
@@ -369,20 +362,6 @@ function render() {
     debugRenderer.update();
     const deltaTime = clock.getDelta();
 
-    saveCamera();
-    // controls.enabled=scene.userData.fppCamera;
-    // if (scene.userData.fppCamera) {
-    //     if (orbitControls.enabled) {
-    //         loadCamera();
-    //         CHARACTER.restoreCamera(camera);
-    //     }
-    //     orbitControls.enabled = false;
-    // } else {
-    //     orbitControls.enabled = true;
-    //     orbitControls.update();
-    // }
-    // SCENE.updateLight();
-
     //raycaster
     raycaster.setFromCamera(mouse, camera);
 
@@ -419,21 +398,5 @@ function render() {
     renderer.render(scene, camera);
 
 
-}
-function saveCamera() {
-    posCameraX = camera.position.x;
-    posCameraY = camera.position.y;
-    posCameraZ = camera.position.z;
-    rotCameraX = camera.rotation.x;
-    rotCameraY = camera.rotation.y;
-    rotCameraZ = camera.rotation.z;
-}
-function loadCamera() {
-    camera.position.x = posCameraX;
-    camera.position.y = posCameraY;
-    camera.position.z = posCameraZ;
-    camera.rotation.x = rotCameraX;
-    camera.rotation.y = rotCameraY;
-    camera.rotation.z = rotCameraZ;
 }
 

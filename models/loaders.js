@@ -80,19 +80,26 @@ class CargarModelos {
         objects.push(gltf.scene.getObjectByName(escalon));
 
       }
-      // objects.push(gltf.scene.getObjectByName("escalon1"));
-      // objects.push(gltf.scene.getObjectByName("escalon2"));
-      // objects.push(gltf.scene.getObjectByName("escalon3"));
-      // objects.push(gltf.scene.getObjectByName("escalon4"));
-      // objects.push(gltf.scene.getObjectByName("escalon5"));
-      // objects.push(gltf.scene.getObjectByName("escalon6"));
-      // objects.push(gltf.scene.getObjectByName("escalon7"));
-      // objects.push(gltf.scene.getObjectByName("escalon8"));
-      // objects.push(gltf.scene.getObjectByName("escalon9"));
-      // objects.push(gltf.scene.getObjectByName("escalon10"));
-      // objects.push(gltf.scene.getObjectByName("escalon11"));
-      // objects.push(gltf.scene.getObjectByName("escalon12"));
-      // objects.push(gltf.scene.getObjectByName("Christmas Gift"));
+      for(let i=1;i<=6;i++){
+        var cubo="cubo"+i.toString();
+        objects.push(gltf.scene.getObjectByName(cubo));
+
+      }
+      for(let i=1;i<=4;i++){
+        var descanso="descansoaa"+i.toString();
+        objects.push(gltf.scene.getObjectByName(descanso));
+
+      }
+      for(let i=1;i<=4;i++){
+        var a="a"+i.toString();
+        objects.push(gltf.scene.getObjectByName(a));
+
+      }
+      for(let i=1;i<=13;i++){
+        var piedra="piedra"+i.toString();
+        objects.push(gltf.scene.getObjectByName(piedra));
+
+      }
       console.log(objects[0]);
       // console.log(objects[1]);
       // var panel2 = gltf.scene.getObjectByName("Plano.070");
