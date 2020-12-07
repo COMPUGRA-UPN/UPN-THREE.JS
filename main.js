@@ -230,6 +230,7 @@ function init() {
 
 
     document.addEventListener('mousemove', onDocumentMouseMove, false);
+    document.addEventListener('click', onClick, false);
 }
 function onDocumentMouseMove(event) {
 
@@ -238,6 +239,13 @@ function onDocumentMouseMove(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
     // console.log(mouse);
+
+}
+function onClick(event) {
+
+    if(INTERSECTED!=null){
+        console.log("INTERSECTED: "+INTERSECTED.name);
+    }
 
 }
 function createGUI() {
