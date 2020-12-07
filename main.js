@@ -181,7 +181,7 @@ function init() {
     createGUI();
 
 
-    SCENE = new LoadScene(scene, scene.userData.ambientLight);
+    SCENE = new LoadScene(scene, scene.userData.ambientLight,world);
     UPN = new CargarModelos(scene);
 
     world = new CANNON.World();
