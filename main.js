@@ -24,6 +24,7 @@ let container, stats;
 let camera, scene, raycaster, renderer, gui;
 
 const clock = new THREE.Clock();
+const clock2 = new THREE.Clock();
 
 let world;
 let debugRenderer;
@@ -36,6 +37,7 @@ let vMesh = false;
 
 //characters
 let mixers;
+let mixers2;
 let poste1, poste2, poste3, poste4;
 let lpabellonA, lpabellonB, lbiblioteca;
 
@@ -246,14 +248,11 @@ function init() {
 
     let box = new CANNON.Box(new CANNON.Vec3(3, 3, 3));
     boxBody = new CANNON.Body({ shape: box, mass: 2 });
-    boxBody.position.set(5, 5, 5);
+    boxBody.position.set(15, 50, 5);
     world.addBody(boxBody);
 
 
-    // let boxc = new CANNON.Box(new CANNON.Vec3(1, 4, 1));
-    // boxCBody = new CANNON.Body({ shape: boxc, mass: 5 });
-    // boxCBody.position.set(0,15, 0);
-    // world.addBody(boxCBody);
+
 
     var mass = 200, radius = 4;
     sphereShape = new CANNON.Sphere(radius);
@@ -312,7 +311,10 @@ function init() {
     //characters
     const loader = new FBXLoader();
     loader.load('models/secretaria/Texting.fbx', function (object) {
-
+        let boxc = new CANNON.Box(new CANNON.Vec3(1,13, 1));
+        let boxCBody = new CANNON.Body({ shape: boxc, mass: 0 });
+       
+        
         mixers = new THREE.AnimationMixer(object);
 
         const action = mixers.clipAction(object.animations[0]);
@@ -330,8 +332,30 @@ function init() {
         });
         object.scale.setScalar(0.08);
         object.position.set(200, 21, 500);
+        world.addBody(boxCBody);
         scene.add(object);
+        boxCBody.position.copy(object.position);
+    });
+    const loader2 = new FBXLoader();
+    loader2.load('models/secretaria/Typing.fbx', function (object) {
+        mixers2 = new THREE.AnimationMixer(object);
 
+        const action = mixers2.clipAction(object.animations[0]);
+        action.play();
+
+        object.traverse(function (child) {
+
+            if (child.isMesh) {
+
+                child.castShadow = true;
+                child.receiveShadow = true;
+
+            }
+
+        });
+        object.scale.setScalar(0.08);
+        object.position.set(105, 21, 480);
+        scene.add(object);
     });
 
 
@@ -446,7 +470,7 @@ function createGUI() {
         val = 2;
     });
 
-    graphicsFolder.open();
+    // graphicsFolder.open();
 
 }
 
@@ -460,8 +484,10 @@ function animate() {
     requestAnimationFrame(animate);
 
     const delta = clock.getDelta();
+    const delta2 = clock2.getDelta();
 
     if (mixers) mixers.update(delta);
+    if (mixers2) mixers2.update(delta2);
 
     // renderer.render(scene, camera);
     // controls.update(clock1.getDelta());
