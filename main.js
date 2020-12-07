@@ -6,6 +6,7 @@ import { GUI } from './node_modules/three/examples/jsm/libs/dat.gui.module.js';
 import { Character } from "./character/Character.js";
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import CargarModelos from './models/loaders.js';
+import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader.js';
 
 const mouse = new THREE.Vector2();
 //instances
@@ -32,6 +33,8 @@ let boxCBody;
 var sphereShape, sphereBody;
 let bMesh;
 
+
+let mixers;
 var fullscreenchange;
 
 init();
@@ -230,6 +233,31 @@ function init() {
 
     }
 
+
+    const loader = new FBXLoader();
+        loader.load( 'models/secretaria/Texting.fbx', function ( object ) {
+
+            mixers = new THREE.AnimationMixer( object );
+
+            const action = mixers.clipAction( object.animations[ 0 ] );
+            action.play();
+
+            object.traverse( function ( child ) {
+
+                if ( child.isMesh ) {
+
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+
+                }
+
+            } );
+            object.scale.setScalar(0.1);
+            object.position.set(200,21,500);
+            scene.add( object );
+
+    } );
+
     document.addEventListener('mousemove', onDocumentMouseMove, false);
     document.addEventListener('click', onClick, false);
 }
@@ -343,9 +371,9 @@ function animate() {
 
     requestAnimationFrame(animate);
 
-    // const delta = clock.getDelta();
+     const delta = clock.getDelta();
 
-    // if (mixers) mixers.update(delta);
+    if (mixers) mixers.update(delta);
 
     // renderer.render(scene, camera);
     // controls.update(clock1.getDelta());
@@ -369,7 +397,7 @@ function render() {
     bMesh.quaternion.copy(boxBody.quaternion);
 
     debugRenderer.update();
-    const deltaTime = clock.getDelta();
+    //const deltaTime = clock.getDelta();
 
     //raycaster
     raycaster.setFromCamera(mouse, camera);
