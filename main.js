@@ -12,7 +12,7 @@ const mouse = new THREE.Vector2();
 let SCENE = null;
 let UPN = null;
 let INTERSECTED;
-var controls,time = Date.now();
+var controls, time = Date.now();
 
 // lights
 let spotLight;
@@ -21,13 +21,6 @@ let ambientLight;
 // Graphics variables
 let container, stats;
 let camera, scene, raycaster, renderer, gui;
-let orbitControls
-var posCameraX;
-var posCameraY;
-var posCameraZ;
-var rotCameraX;
-var rotCameraY;
-var rotCameraZ;
 
 const clock = new THREE.Clock();
 
@@ -59,18 +52,18 @@ function init() {
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
     window.addEventListener('resize', _OnWindowResize, false);
-    var blocker = document.getElementById( 'blocker' );
-    var instructions = document.getElementById( 'instructions' );
+    var blocker = document.getElementById('blocker');
+    var instructions = document.getElementById('instructions');
 
     var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
-    if ( havePointerLock ) {
+    if (havePointerLock) {
 
         var element = document.body;
 
-        var pointerlockchange = function ( event ) {
+        var pointerlockchange = function (event) {
 
-            if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+            if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
 
                 controls.enabled = true;
 
@@ -90,41 +83,41 @@ function init() {
 
         }
 
-        var pointerlockerror = function ( event ) {
+        var pointerlockerror = function (event) {
             instructions.style.display = '';
         }
 
         // Hook pointer lock state change events
-        document.addEventListener( 'pointerlockchange', pointerlockchange, false );
-        document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
-        document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+        document.addEventListener('pointerlockchange', pointerlockchange, false);
+        document.addEventListener('mozpointerlockchange', pointerlockchange, false);
+        document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
 
-        document.addEventListener( 'pointerlockerror', pointerlockerror, false );
-        document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
-        document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+        document.addEventListener('pointerlockerror', pointerlockerror, false);
+        document.addEventListener('mozpointerlockerror', pointerlockerror, false);
+        document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
 
-        instructions.addEventListener( 'click', function ( event ) {
+        instructions.addEventListener('click', function (event) {
             instructions.style.display = 'none';
 
             // Ask the browser to lock the pointer
             element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
 
-            if ( /Firefox/i.test( navigator.userAgent ) ) {
+            if (/Firefox/i.test(navigator.userAgent)) {
 
-                var fullscreenchange = function ( event ) {
+                var fullscreenchange = function (event) {
 
-                    if ( document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element ) {
+                    if (document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element) {
 
-                        document.removeEventListener( 'fullscreenchange', fullscreenchange );
-                        document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+                        document.removeEventListener('fullscreenchange', fullscreenchange);
+                        document.removeEventListener('mozfullscreenchange', fullscreenchange);
 
                         element.requestPointerLock();
                     }
 
                 }
 
-                document.addEventListener( 'fullscreenchange', fullscreenchange, false );
-                document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+                document.addEventListener('fullscreenchange', fullscreenchange, false);
+                document.addEventListener('mozfullscreenchange', fullscreenchange, false);
 
                 element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
 
@@ -136,7 +129,7 @@ function init() {
 
             }
 
-        }, false );
+        }, false);
 
     } else {
 
@@ -145,15 +138,6 @@ function init() {
     }
 
     camera = new FPPCamera(renderer);
-
-    saveCamera();
-    orbitControls = new OrbitControls(camera, renderer.domElement);
-    orbitControls.enabled = false;
-    loadCamera();
-
-
-
-
     scene = new THREE.Scene();
     //Luces
     spotLight = new THREE.SpotLight(0xffffff, 1);
@@ -179,13 +163,15 @@ function init() {
     // console.log(scene.userData.ambientLight);
     createGUI();
 
-
-    SCENE = new LoadScene(scene, scene.userData.ambientLight,world);
-    UPN = new CargarModelos(scene);
-
     world = new CANNON.World();
-    world.gravity.set(0, -9.8, 0);
+    world.gravity.set(0, -10, 0);
     world.broadphase = new CANNON.NaiveBroadphase();
+
+
+    SCENE = new LoadScene(scene, scene.userData.ambientLight, world);
+    UPN = new CargarModelos(scene, world);
+
+
 
     let plane = new CANNON.Plane();
     let planebody = new CANNON.Body({ shape: plane, mass: 0 });
@@ -199,23 +185,24 @@ function init() {
     boxBody.position.set(5, 5, 5);
     world.addBody(boxBody);
 
-    
+
     // let boxc = new CANNON.Box(new CANNON.Vec3(1, 4, 1));
     // boxCBody = new CANNON.Body({ shape: boxc, mass: 5 });
     // boxCBody.position.set(0,15, 0);
     // world.addBody(boxCBody);
-    
-    var mass = 10, radius = 5;
+
+    var mass = 200, radius = 4;
     sphereShape = new CANNON.Sphere(radius);
     sphereBody = new CANNON.Body({ mass: mass });
     sphereBody.addShape(sphereShape);
-    sphereBody.position.set(0,5,0);
+    sphereBody.position.set(0, 5, 0);
     sphereBody.linearDamping = 0.9;
     world.addBody(sphereBody);
 
-    controls = new PointerLockControls( camera , sphereBody );
-    scene.add( controls.getObject() );
-    controls.enabled=true;
+    controls = new PointerLockControls(camera, sphereBody);
+    controls.velocityFactor=10;
+    scene.add(controls.getObject());
+    controls.enabled = true;
 
 
     let bGeo = new THREE.BoxGeometry(5, 5, 5);
@@ -243,10 +230,13 @@ function onDocumentMouseMove(event) {
 }
 function onClick(event) {
 
-    if(INTERSECTED!=null){
-        console.log("INTERSECTED: "+INTERSECTED.name);
+    if (INTERSECTED != null) {
+        console.log("INTERSECTED: " + INTERSECTED.name);
     }
 
+}
+function showSkeleton(){
+    console.log("ASdasdasd");
 }
 function createGUI() {
 
@@ -260,8 +250,13 @@ function createGUI() {
 
 
     const graphicsFolder = gui.addFolder("Graphics");
-
-    graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
+    var settings = {
+        'show model': true,
+        'show skeleton': showSkeleton,
+       
+    }
+    // graphicsFolder.add(scene.userData, "fppCamera").name("FPPCamera");
+    graphicsFolder.add( settings, 'show skeleton' );
 
 
     const params = {
@@ -358,28 +353,14 @@ function animate2() {
 }
 function render() {
     world.step(timeStamp);
-    controls.update( Date.now() - time );
+    controls.update(Date.now() - time);
     time = Date.now();
-    
+
     bMesh.position.copy(boxBody.position);
     bMesh.quaternion.copy(boxBody.quaternion);
 
     debugRenderer.update();
     const deltaTime = clock.getDelta();
-
-    saveCamera();
-    // controls.enabled=scene.userData.fppCamera;
-    // if (scene.userData.fppCamera) {
-    //     if (orbitControls.enabled) {
-    //         loadCamera();
-    //         CHARACTER.restoreCamera(camera);
-    //     }
-    //     orbitControls.enabled = false;
-    // } else {
-    //     orbitControls.enabled = true;
-    //     orbitControls.update();
-    // }
-    // SCENE.updateLight();
 
     //raycaster
     raycaster.setFromCamera(mouse, camera);
@@ -398,8 +379,10 @@ function render() {
                 if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
 
                 INTERSECTED = intersects[0].object;
-                INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-                INTERSECTED.material.emissive.setHex(0xff0000);
+                if (true) {
+                    INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                    INTERSECTED.material.emissive.setHex(0xff0000);
+                }
                 console.log(INTERSECTED);
             }
         }
@@ -415,21 +398,5 @@ function render() {
     renderer.render(scene, camera);
 
 
-}
-function saveCamera() {
-    posCameraX = camera.position.x;
-    posCameraY = camera.position.y;
-    posCameraZ = camera.position.z;
-    rotCameraX = camera.rotation.x;
-    rotCameraY = camera.rotation.y;
-    rotCameraZ = camera.rotation.z;
-}
-function loadCamera() {
-    camera.position.x = posCameraX;
-    camera.position.y = posCameraY;
-    camera.position.z = posCameraZ;
-    camera.rotation.x = rotCameraX;
-    camera.rotation.y = rotCameraY;
-    camera.rotation.z = rotCameraZ;
 }
 
